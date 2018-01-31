@@ -1,0 +1,1 @@
+In-memory exchange implementation of [XChange](https://github.com/timmolter/XChange) API
