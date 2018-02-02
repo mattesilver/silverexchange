@@ -5,6 +5,10 @@ import java.math.BigDecimal;
 import static java.math.BigDecimal.ZERO;
 
 public class BigDecimals {
+    private BigDecimals() {
+        // util class
+    }
+
     /**
      * @return true if num is greater than zero
      */

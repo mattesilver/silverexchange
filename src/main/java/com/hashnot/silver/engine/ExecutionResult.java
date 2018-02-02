@@ -10,7 +10,7 @@ public class ExecutionResult {
      */
     public final Transaction executed;
 
-    /**TODO fix typo
+    /**
      * A reminder of the currently executed Offer. If the offer was fully matched it's null. If the offer wasn't matched at all, it's the same object as the original offer
      */
     public final Offer reminder;
@@ -20,7 +20,7 @@ public class ExecutionResult {
      */
     public final Offer againstReminder;
 
-    public ExecutionResult(Transaction executed, Offer reminder, Offer againstReminder) {
+    ExecutionResult(Transaction executed, Offer reminder, Offer againstReminder) {
         this.executed = executed;
         this.reminder = reminder;
         this.againstReminder = againstReminder;

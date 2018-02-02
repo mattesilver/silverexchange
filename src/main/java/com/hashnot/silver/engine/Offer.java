@@ -1,7 +1,5 @@
 package com.hashnot.silver.engine;
 
-import org.knowm.xchange.currency.CurrencyPair;
-
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -9,19 +7,19 @@ import java.util.Objects;
  * Private API
  */
 public class Offer {
-    private CurrencyPair pair;
+    private Object pair;
     private Side side;
     private BigDecimal amount;
     private BigDecimal rate;
 
-    Offer(CurrencyPair pair, Side side, BigDecimal amount, BigDecimal rate) {
+    Offer(Object pair, Side side, BigDecimal amount, BigDecimal rate) {
         this.pair = pair;
         this.side = side;
         this.amount = amount;
         this.rate = rate;
     }
 
-    public CurrencyPair getPair() {
+    public Object getPair() {
         return pair;
     }
 

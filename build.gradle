@@ -10,7 +10,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.7
 version = '1.0'
 
 repositories {
@@ -18,11 +18,6 @@ repositories {
 }
 
 dependencies {
-    compile('org.knowm.xchange:xchange-core:4.3.2') {
-        exclude group: 'com.github.mmazi', module: 'rescu'
-        exclude group: 'commons-io', module: 'commons-io'
-    }
-
     testCompile "org.junit.jupiter:junit-jupiter-api:5.0.3"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:5.0.3"
 }

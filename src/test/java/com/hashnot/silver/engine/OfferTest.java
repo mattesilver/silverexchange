@@ -1,7 +1,6 @@
 package com.hashnot.silver.engine;
 
 import org.junit.jupiter.api.Test;
-import org.knowm.xchange.currency.CurrencyPair;
 
 import java.math.BigDecimal;
 
@@ -11,8 +10,7 @@ import static java.math.BigDecimal.ONE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OfferTest {
-    // TODO remove all occurrences of CurrencyPair or any dependency on XChange as currently unnecessary
-    private static final CurrencyPair PAIR = CurrencyPair.BTC_EUR;
+    private static final Object PAIR = new Object();
     private static final BigDecimal TWO = new BigDecimal(2);
     private static final BigDecimal THREE = new BigDecimal(3);
 
