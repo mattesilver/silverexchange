@@ -3,15 +3,18 @@ package com.hashnot.silver.engine;
 import org.knowm.xchange.currency.CurrencyPair;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
+import java.util.Objects;
 
+/**
+ * Private API
+ */
 public class Offer {
     private CurrencyPair pair;
     private Side side;
     private BigDecimal amount;
     private BigDecimal rate;
 
-    public Offer(CurrencyPair pair, Side side, BigDecimal amount, BigDecimal rate) {
+    Offer(CurrencyPair pair, Side side, BigDecimal amount, BigDecimal rate) {
         this.pair = pair;
         this.side = side;
         this.amount = amount;
@@ -30,17 +33,8 @@ public class Offer {
         return rate;
     }
 
-    public boolean match(Offer other) {
-        return
-                pair.equals(other.pair)
-                        && side != other.side
-                        && rateMatch(other);
-    }
-
     /**
-     * TODO revert semantics of this and against parameter
-     *
-     * @param against an offer from the table against which this order is executed
+     * @param against an offer from the order book, against which <code>this</code> order is executed
      */
     public ExecutionResult execute(Offer against) {
         assert pair.equals(against.pair) : "Not executing against offer of the same pair";
@@ -51,42 +45,67 @@ public class Offer {
             return new ExecutionResult(null, this, against);
         }
 
-        if (amount.equals(against.amount))
+        BigDecimal amountDiff = amount.subtract(against.amount);
+        int amountDiffSig = amountDiff.signum();
+        if (amountDiffSig == 0)
             // 1-to-1 match
             return new ExecutionResult(new Transaction(amount, against.rate), null, null);
 
-
-        BigDecimal txAmount = BigDecimals.min(amount, against.amount);
-        Transaction tx = new Transaction(txAmount, against.rate);
-
-        BigDecimal reminderAmount = BigDecimals.max(amount, against.amount).add(txAmount.negate());
-
-
-        Offer reminder = new Offer(pair, side, amount.add(against.amount.negate()), rate);
-        Offer againstReminder = new Offer(null, against.side, null, null);
-        return new ExecutionResult(tx, reminder, againstReminder);
+        // here we have to null either of remainders in the result
+        Offer reminder,
+                againstReminder;
+        Transaction tx;
 
 
-    }
+        // if this.amount > against.amount, null againstReminder and tx.amount comes from against
+        if (amountDiffSig > 0) {
+            reminder = new Offer(against.pair, side, amountDiff, rate);
+            againstReminder = null;
+            tx = new Transaction(against.amount, against.rate);
 
-    private boolean rateMatch(Offer against) {
-        return rate.compareTo(against.rate) * side.orderSignum >= 0;
-    }
-
-    static class RateComparator implements Comparator<Offer> {
-
-        @Override
-        public int compare(Offer o1, Offer o2) {
-            assert o1.pair.equals(o2.pair);
-            assert o1.side == o2.side;
-            return Side.RATE_COMPARATOR.compare(o1, o2);
+            // otherwise, i.e. this.amount < against.amount, null reminder and tx.amount comes from this
+        } else {
+            reminder = null;
+            againstReminder = new Offer(pair, against.side, amountDiff.negate(), against.rate);
+            tx = new Transaction(amount, against.rate);
         }
+
+        return new ExecutionResult(tx, reminder, againstReminder);
     }
 
-    final public static Comparator<Offer> RATE_COMPARATOR = new RateComparator();
+    boolean rateMatch(Offer against) {
+        assert side != against.side;
+        assert BigDecimals.gtz(rate);
+        return rate.compareTo(against.rate) * side.orderSignum <= 0;
+    }
 
     @Override
     public String toString() {
-        return side + " " + amount + " " + pair + "@" + rate;
+        return side
+                + " " + amount
+                + " " + pair
+                + "@" + rate
+                ;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pair, side, amount, rate);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return
+                this == obj
+                        || obj instanceof Offer && equals((Offer) obj);
+    }
+
+    private boolean equals(Offer o) {
+        return
+                pair.equals(o.pair)
+                        && side == o.side
+                        && amount.equals(o.amount)
+                        && rate.equals(o.rate)
+                ;
     }
 }

@@ -11,21 +11,107 @@ import static java.math.BigDecimal.ONE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OfferTest {
-    private static CurrencyPair PAIR = CurrencyPair.BTC_EUR;
-    private static BigDecimal AMT = ONE;
-    private static BigDecimal RATE = new BigDecimal(2);
+    // TODO remove all occurrences of CurrencyPair or any dependency on XChange as currently unnecessary
+    private static final CurrencyPair PAIR = CurrencyPair.BTC_EUR;
+    private static final BigDecimal TWO = new BigDecimal(2);
+    private static final BigDecimal THREE = new BigDecimal(3);
 
     @Test
     void executeExactlyMatchingOffers() {
-        Offer against = new Offer(PAIR, Bid, AMT, RATE);
-        Offer offer = new Offer(PAIR, Ask, AMT, RATE);
-        ExecutionResult result = offer.execute(against);
-        assertFalse(result.againstReminder.isPresent());
-        assertFalse(result.reminder.isPresent());
-        assertTrue(result.executed.isPresent());
+        final BigDecimal RATE = TWO;
+        Offer against = new Offer(PAIR, Bid, ONE, RATE);
+        Offer offer = new Offer(PAIR, Ask, ONE, RATE);
 
-        Transaction tx = result.executed.get();
-        assertEquals(tx.amount, AMT);
-        assertEquals(tx.rate, RATE);
+
+        ExecutionResult result = offer.execute(against);
+
+
+        assertNull(result.againstReminder);
+        assertNull(result.reminder);
+
+        Transaction expectedTx = new Transaction(ONE, RATE);
+        assertEquals(expectedTx, result.executed);
     }
+
+    @Test
+    void executePartialMatchWithReminder() {
+        final BigDecimal RATE = TWO;
+        Offer against = new Offer(PAIR, Bid, ONE, RATE);
+        Offer offer = new Offer(PAIR, Ask, THREE, RATE);
+
+
+        ExecutionResult result = offer.execute(against);
+
+        assertNull(result.againstReminder);
+
+        Offer expectedReminder = new Offer(offer.getPair(), offer.getSide(), TWO, offer.getRate());
+        assertEquals(expectedReminder, result.reminder);
+
+        Transaction expectedTx = new Transaction(ONE, RATE);
+        assertEquals(expectedTx, result.executed);
+    }
+
+    @Test
+    void executePartialMatchWithAgainstReminder() {
+        final BigDecimal RATE = TWO;
+        Offer against = new Offer(PAIR, Bid, THREE, RATE);
+        Offer offer = new Offer(PAIR, Ask, TWO, RATE);
+
+
+        ExecutionResult result = offer.execute(against);
+
+        assertNull(result.reminder);
+
+        Offer expectedAgainstReminder = new Offer(against.getPair(), against.getSide(), ONE, against.getRate());
+        assertEquals(expectedAgainstReminder, result.againstReminder);
+
+        Transaction expectedTx = new Transaction(TWO, RATE);
+        assertEquals(expectedTx, result.executed);
+    }
+
+    @Test
+    void testExecuteNoMatch() {
+        Offer against = new Offer(PAIR, Bid, THREE, ONE);
+        Offer offer = new Offer(PAIR, Ask, TWO, TWO);
+
+
+        ExecutionResult result = offer.execute(against);
+
+        assertNull(result.executed);
+
+        assertEquals(against, result.againstReminder);
+
+        assertEquals(offer, result.reminder);
+    }
+
+    @Test
+    void testEqualRateMatch() {
+        final BigDecimal ANY = TWO;
+        Offer against = new Offer(PAIR, Bid, ANY, ONE);
+        Offer offer = new Offer(PAIR, Ask, ANY, ONE);
+        assertTrue(offer.rateMatch(against));
+    }
+
+    /**
+     * Buyer is paying more then seller is selling for
+     */
+    @Test
+    void testBiggerRateMatch() {
+        final BigDecimal ANY = TWO;
+        Offer against = new Offer(PAIR, Bid, ANY, TWO);
+        Offer offer = new Offer(PAIR, Ask, ANY, ONE);
+        assertTrue(offer.rateMatch(against));
+    }
+
+    /**
+     * Buyer is willing less the the seller is selling for
+     */
+    @Test
+    void testSmallerRateNoMatch() {
+        final BigDecimal ANY = TWO;
+        Offer against = new Offer(PAIR, Bid, ANY, ONE);
+        Offer offer = new Offer(PAIR, Ask, ANY, TWO);
+        assertFalse(offer.rateMatch(against));
+    }
+
 }

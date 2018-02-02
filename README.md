@@ -1,1 +1,1 @@
-In-memory exchange implementation of [XChange](https://github.com/timmolter/XChange) API
+In-memory stock exchange order matching engine
