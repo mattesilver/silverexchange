@@ -40,13 +40,13 @@ public class OrderBook {
         do {
             Offer against = otherOffers.get(0);
             ExecutionResult execResult = handled.execute(against);
-            if (execResult.executed != null)
-                result.add(execResult.executed);
+            if (execResult.transaction != null)
+                result.add(execResult.transaction);
 
-            handled = execResult.reminder;
+            handled = execResult.remainder;
 
-            if (execResult.againstReminder != null) {
-                otherOffers.set(0, execResult.againstReminder);
+            if (execResult.againstRemainder != null) {
+                otherOffers.set(0, execResult.againstRemainder);
                 break;
             } else {
                 otherOffers.remove(0);

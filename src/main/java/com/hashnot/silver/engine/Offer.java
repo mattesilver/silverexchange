@@ -50,25 +50,25 @@ public class Offer {
             return new ExecutionResult(new Transaction(amount, against.rate), null, null);
 
         // here we have to null either of remainders in the result
-        Offer reminder,
-                againstReminder;
+        Offer remainder,
+                againstRemainder;
         Transaction tx;
 
 
-        // if this.amount > against.amount, null againstReminder and tx.amount comes from against
+        // if this.amount > against.amount, null againstRemainder and tx.amount comes from against
         if (amountDiffSig > 0) {
-            reminder = new Offer(against.pair, side, amountDiff, rate);
-            againstReminder = null;
+            remainder = new Offer(against.pair, side, amountDiff, rate);
+            againstRemainder = null;
             tx = new Transaction(against.amount, against.rate);
 
-            // otherwise, i.e. this.amount < against.amount, null reminder and tx.amount comes from this
+            // otherwise, i.e. this.amount < against.amount, null remainder and tx.amount comes from this
         } else {
-            reminder = null;
-            againstReminder = new Offer(pair, against.side, amountDiff.negate(), against.rate);
+            remainder = null;
+            againstRemainder = new Offer(pair, against.side, amountDiff.negate(), against.rate);
             tx = new Transaction(amount, against.rate);
         }
 
-        return new ExecutionResult(tx, reminder, againstReminder);
+        return new ExecutionResult(tx, remainder, againstRemainder);
     }
 
     boolean rateMatch(Offer against) {

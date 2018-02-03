@@ -24,15 +24,15 @@ class OfferTest {
         ExecutionResult result = offer.execute(against);
 
 
-        assertNull(result.againstReminder);
-        assertNull(result.reminder);
+        assertNull(result.againstRemainder);
+        assertNull(result.remainder);
 
         Transaction expectedTx = new Transaction(ONE, RATE);
-        assertEquals(expectedTx, result.executed);
+        assertEquals(expectedTx, result.transaction);
     }
 
     @Test
-    void executePartialMatchWithReminder() {
+    void executePartialMatchWithRemainder() {
         final BigDecimal RATE = TWO;
         Offer against = new Offer(PAIR, Bid, ONE, RATE);
         Offer offer = new Offer(PAIR, Ask, THREE, RATE);
@@ -40,17 +40,17 @@ class OfferTest {
 
         ExecutionResult result = offer.execute(against);
 
-        assertNull(result.againstReminder);
+        assertNull(result.againstRemainder);
 
-        Offer expectedReminder = new Offer(offer.getPair(), offer.getSide(), TWO, offer.getRate());
-        assertEquals(expectedReminder, result.reminder);
+        Offer expectedRemainder = new Offer(offer.getPair(), offer.getSide(), TWO, offer.getRate());
+        assertEquals(expectedRemainder, result.remainder);
 
         Transaction expectedTx = new Transaction(ONE, RATE);
-        assertEquals(expectedTx, result.executed);
+        assertEquals(expectedTx, result.transaction);
     }
 
     @Test
-    void executePartialMatchWithAgainstReminder() {
+    void executePartialMatchWithAgainstRemainder() {
         final BigDecimal RATE = TWO;
         Offer against = new Offer(PAIR, Bid, THREE, RATE);
         Offer offer = new Offer(PAIR, Ask, TWO, RATE);
@@ -58,13 +58,13 @@ class OfferTest {
 
         ExecutionResult result = offer.execute(against);
 
-        assertNull(result.reminder);
+        assertNull(result.remainder);
 
-        Offer expectedAgainstReminder = new Offer(against.getPair(), against.getSide(), ONE, against.getRate());
-        assertEquals(expectedAgainstReminder, result.againstReminder);
+        Offer expectedAgainstRemainder = new Offer(against.getPair(), against.getSide(), ONE, against.getRate());
+        assertEquals(expectedAgainstRemainder, result.againstRemainder);
 
         Transaction expectedTx = new Transaction(TWO, RATE);
-        assertEquals(expectedTx, result.executed);
+        assertEquals(expectedTx, result.transaction);
     }
 
     @Test
@@ -75,11 +75,11 @@ class OfferTest {
 
         ExecutionResult result = offer.execute(against);
 
-        assertNull(result.executed);
+        assertNull(result.transaction);
 
-        assertEquals(against, result.againstReminder);
+        assertEquals(against, result.againstRemainder);
 
-        assertEquals(offer, result.reminder);
+        assertEquals(offer, result.remainder);
     }
 
     @Test
