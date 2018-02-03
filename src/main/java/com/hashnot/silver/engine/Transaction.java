@@ -7,7 +7,7 @@ public class Transaction {
     private final BigDecimal amount;
     private final BigDecimal rate;
 
-    Transaction(BigDecimal amount, BigDecimal rate) {
+    public Transaction(BigDecimal amount, BigDecimal rate) {
         this.rate = rate;
         this.amount = amount;
     }

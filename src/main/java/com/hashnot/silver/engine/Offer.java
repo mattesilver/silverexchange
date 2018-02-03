@@ -12,7 +12,7 @@ public class Offer {
     private BigDecimal amount;
     private BigDecimal rate;
 
-    Offer(Object pair, Side side, BigDecimal amount, BigDecimal rate) {
+    public Offer(Object pair, Side side, BigDecimal amount, BigDecimal rate) {
         this.pair = pair;
         this.side = side;
         this.amount = amount;
