@@ -13,6 +13,17 @@ public class Offer {
     private BigDecimal rate;
 
     public Offer(Object pair, Side side, BigDecimal amount, BigDecimal rate) {
+        assert pair != null;
+        assert side != null;
+        assert amount != null;
+        assert rate != null;
+
+        if (!BigDecimals.gtz(amount))
+            throw new IllegalArgumentException("Non-positive amount");
+
+        if (!BigDecimals.gtz(rate))
+            throw new IllegalArgumentException("Non-positive rate");
+
         this.pair = pair;
         this.side = side;
         this.amount = amount;

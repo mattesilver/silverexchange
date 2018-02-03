@@ -15,6 +15,16 @@ class OfferTest {
     private static final BigDecimal THREE = new BigDecimal(3);
 
     @Test
+    void testExceptionOnNonPositiveRate() {
+        assertThrows(IllegalArgumentException.class, () -> new Offer(PAIR, Ask, ONE, ONE.negate()));
+    }
+
+    @Test
+    void testExceptionOnNonPositiveAmount() {
+        assertThrows(IllegalArgumentException.class, () -> new Offer(PAIR, Ask, ONE.negate(), ONE));
+    }
+
+    @Test
     void executeExactlyMatchingOffers() {
         final BigDecimal RATE = TWO;
         Offer against = new Offer(PAIR, Bid, ONE, RATE);
@@ -32,7 +42,7 @@ class OfferTest {
     }
 
     @Test
-    void executePartialMatchWithRemainder() {
+    void testExecutePartialMatchWithRemainder() {
         final BigDecimal RATE = TWO;
         Offer against = new Offer(PAIR, Bid, ONE, RATE);
         Offer offer = new Offer(PAIR, Ask, THREE, RATE);
@@ -50,7 +60,7 @@ class OfferTest {
     }
 
     @Test
-    void executePartialMatchWithAgainstRemainder() {
+    void testExecutePartialMatchWithAgainstRemainder() {
         final BigDecimal RATE = TWO;
         Offer against = new Offer(PAIR, Bid, THREE, RATE);
         Offer offer = new Offer(PAIR, Ask, TWO, RATE);
@@ -94,7 +104,7 @@ class OfferTest {
      * Buyer is paying more then seller is selling for
      */
     @Test
-    void testBiggerRateMatch() {
+    void testGreaterRateMatch() {
         final BigDecimal ANY = TWO;
         Offer against = new Offer(PAIR, Bid, ANY, TWO);
         Offer offer = new Offer(PAIR, Ask, ANY, ONE);
