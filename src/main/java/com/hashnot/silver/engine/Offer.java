@@ -1,12 +1,17 @@
 package com.hashnot.silver.engine;
 
+import com.hashnot.silver.exchange.util.BigDecimals;
+
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
  * Private API
  */
 public class Offer {
+    public static final Comparator<Offer> COMPARATOR_BY_RATE = (a, b) ->  a.getRate().compareTo(b.getRate()) * a.getSide().orderSignum;
+
     private Object pair;
     private Side side;
     private BigDecimal amount;

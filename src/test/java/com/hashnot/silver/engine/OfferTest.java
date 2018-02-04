@@ -3,10 +3,12 @@ package com.hashnot.silver.engine;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static com.hashnot.silver.engine.Side.Ask;
 import static com.hashnot.silver.engine.Side.Bid;
 import static java.math.BigDecimal.ONE;
+import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OfferTest {
@@ -122,4 +124,31 @@ class OfferTest {
         assertFalse(offer.rateMatch(against));
     }
 
+    @Test
+    void testRateComparatorTwoBidsDescending() {
+        Offer o1 = new Offer(PAIR, Bid, ONE, ONE);
+        Offer o2 = new Offer(PAIR, Bid, ONE, TWO);
+        int compare = Offer.COMPARATOR_BY_RATE.compare(o1, o2);
+        assertTrue(compare > 0);
+
+        List<Offer> offers = asList(o1, o2);
+        offers.sort(Offer.COMPARATOR_BY_RATE);
+
+        List<Offer> expected = asList(o2, o1);
+        assertEquals(expected, offers);
+    }
+
+    @Test
+    void testRateComparatorTwoAsksAscending() {
+        Offer o1 = new Offer(PAIR, Ask, ONE, ONE);
+        Offer o2 = new Offer(PAIR, Ask, ONE, TWO);
+        int compare = Offer.COMPARATOR_BY_RATE.compare(o1, o2);
+        assertTrue(compare < 0);
+
+        List<Offer> offers = asList(o1, o2);
+        offers.sort(Offer.COMPARATOR_BY_RATE);
+
+        List<Offer> expected = asList(o1, o2);
+        assertEquals(expected, offers);
+    }
 }

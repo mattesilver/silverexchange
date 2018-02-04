@@ -17,4 +17,7 @@ public enum Side {
         this.orderSignum = orderSignum;
     }
 
+    public Side reverse() {
+        return this == Ask ? Bid : Ask;
+    }
 }
