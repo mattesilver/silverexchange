@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import static com.hashnot.silver.engine.Side.Ask;
 import static com.hashnot.silver.engine.Side.Bid;
 
-//TODO update tests to use this class
 public class TestOfferFactory {
     private static final Object PAIR = new Object() {
         @Override

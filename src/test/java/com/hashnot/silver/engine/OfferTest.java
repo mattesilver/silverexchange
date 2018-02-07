@@ -5,32 +5,31 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static com.hashnot.silver.engine.Side.Ask;
-import static com.hashnot.silver.engine.Side.Bid;
+import static com.hashnot.silver.engine.TestOfferFactory.ask;
+import static com.hashnot.silver.engine.TestOfferFactory.bid;
 import static java.math.BigDecimal.ONE;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OfferTest {
-    private static final Object PAIR = new Object();
     private static final BigDecimal TWO = new BigDecimal(2);
     private static final BigDecimal THREE = new BigDecimal(3);
 
     @Test
     void testExceptionOnNonPositiveRate() {
-        assertThrows(IllegalArgumentException.class, () -> new Offer(PAIR, Ask, ONE, ONE.negate()));
+        assertThrows(IllegalArgumentException.class, () -> ask(ONE, ONE.negate()));
     }
 
     @Test
     void testExceptionOnNonPositiveAmount() {
-        assertThrows(IllegalArgumentException.class, () -> new Offer(PAIR, Ask, ONE.negate(), ONE));
+        assertThrows(IllegalArgumentException.class, () -> ask(ONE.negate(), ONE));
     }
 
     @Test
     void executeExactlyMatchingOffers() {
         final BigDecimal RATE = TWO;
-        Offer against = new Offer(PAIR, Bid, ONE, RATE);
-        Offer offer = new Offer(PAIR, Ask, ONE, RATE);
+        Offer against = bid(ONE, RATE);
+        Offer offer = ask(ONE, RATE);
 
 
         ExecutionResult result = offer.execute(against);
@@ -46,15 +45,15 @@ class OfferTest {
     @Test
     void testExecutePartialMatchWithRemainder() {
         final BigDecimal RATE = TWO;
-        Offer against = new Offer(PAIR, Bid, ONE, RATE);
-        Offer offer = new Offer(PAIR, Ask, THREE, RATE);
+        Offer against = bid(ONE, RATE);
+        Offer offer = ask(THREE, RATE);
 
 
         ExecutionResult result = offer.execute(against);
 
         assertNull(result.againstRemainder);
 
-        Offer expectedRemainder = new Offer(offer.getPair(), offer.getSide(), TWO, offer.getRate());
+        Offer expectedRemainder = ask(TWO, offer.getRate());
         assertEquals(expectedRemainder, result.remainder);
 
         Transaction expectedTx = new Transaction(ONE, RATE);
@@ -64,15 +63,15 @@ class OfferTest {
     @Test
     void testExecutePartialMatchWithAgainstRemainder() {
         final BigDecimal RATE = TWO;
-        Offer against = new Offer(PAIR, Bid, THREE, RATE);
-        Offer offer = new Offer(PAIR, Ask, TWO, RATE);
+        Offer against = bid(THREE, RATE);
+        Offer offer = ask(TWO, RATE);
 
 
         ExecutionResult result = offer.execute(against);
 
         assertNull(result.remainder);
 
-        Offer expectedAgainstRemainder = new Offer(against.getPair(), against.getSide(), ONE, against.getRate());
+        Offer expectedAgainstRemainder = bid(ONE, against.getRate());
         assertEquals(expectedAgainstRemainder, result.againstRemainder);
 
         Transaction expectedTx = new Transaction(TWO, RATE);
@@ -81,8 +80,8 @@ class OfferTest {
 
     @Test
     void testExecuteNoMatch() {
-        Offer against = new Offer(PAIR, Bid, THREE, ONE);
-        Offer offer = new Offer(PAIR, Ask, TWO, TWO);
+        Offer against = bid(THREE, ONE);
+        Offer offer = ask(TWO, TWO);
 
 
         ExecutionResult result = offer.execute(against);
@@ -97,8 +96,8 @@ class OfferTest {
     @Test
     void testEqualRateMatch() {
         final BigDecimal ANY = TWO;
-        Offer against = new Offer(PAIR, Bid, ANY, ONE);
-        Offer offer = new Offer(PAIR, Ask, ANY, ONE);
+        Offer against = bid(ANY, ONE);
+        Offer offer = ask(ANY, ONE);
         assertTrue(offer.rateMatch(against));
     }
 
@@ -108,8 +107,8 @@ class OfferTest {
     @Test
     void testGreaterRateMatch() {
         final BigDecimal ANY = TWO;
-        Offer against = new Offer(PAIR, Bid, ANY, TWO);
-        Offer offer = new Offer(PAIR, Ask, ANY, ONE);
+        Offer against = bid(ANY, TWO);
+        Offer offer = ask(ANY, ONE);
         assertTrue(offer.rateMatch(against));
     }
 
@@ -119,15 +118,15 @@ class OfferTest {
     @Test
     void testSmallerRateNoMatch() {
         final BigDecimal ANY = TWO;
-        Offer against = new Offer(PAIR, Bid, ANY, ONE);
-        Offer offer = new Offer(PAIR, Ask, ANY, TWO);
+        Offer against = bid(ANY, ONE);
+        Offer offer = ask(ANY, TWO);
         assertFalse(offer.rateMatch(against));
     }
 
     @Test
     void testRateComparatorTwoBidsDescending() {
-        Offer o1 = new Offer(PAIR, Bid, ONE, ONE);
-        Offer o2 = new Offer(PAIR, Bid, ONE, TWO);
+        Offer o1 = bid(ONE, ONE);
+        Offer o2 = bid(ONE, TWO);
         int compare = Offer.COMPARATOR_BY_RATE.compare(o1, o2);
         assertTrue(compare > 0);
 
@@ -140,8 +139,8 @@ class OfferTest {
 
     @Test
     void testRateComparatorTwoAsksAscending() {
-        Offer o1 = new Offer(PAIR, Ask, ONE, ONE);
-        Offer o2 = new Offer(PAIR, Ask, ONE, TWO);
+        Offer o1 = ask(ONE, ONE);
+        Offer o2 = ask(ONE, TWO);
         int compare = Offer.COMPARATOR_BY_RATE.compare(o1, o2);
         assertTrue(compare < 0);
 

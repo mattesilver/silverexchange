@@ -10,8 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.hashnot.silver.engine.Side.Ask;
-import static com.hashnot.silver.engine.Side.Bid;
 import static com.hashnot.silver.engine.TestOfferFactory.ask;
 import static com.hashnot.silver.engine.TestOfferFactory.bid;
 import static java.math.BigDecimal.ONE;
@@ -21,15 +19,13 @@ import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class OrderBookTest {
-
-    private static final Object PAIR = new Object();
     private static final BigDecimal TWO = new BigDecimal(2);
     private static final BigDecimal THREE = new BigDecimal(3);
 
 
     @Test
     void postValidOfferToEmptyBookEmptyResult() {
-        List<Transaction> transactions = new OrderBook().post(new Offer(PAIR, Ask, ONE, TWO));
+        List<Transaction> transactions = new OrderBook().post(ask(ONE, TWO));
         assertEquals(emptyList(), transactions);
     }
 
@@ -37,19 +33,19 @@ class OrderBookTest {
     void postValidNonMatchingOfferToNonEmptyBookEmptyResult() {
         OrderBook book = new OrderBook();
 
-        book.post(new Offer(PAIR, Ask, ONE, TWO));
-        List<Transaction> transactions = book.post(new Offer(PAIR, Ask, ONE, TWO));
+        book.post(ask(ONE, TWO));
+        List<Transaction> transactions = book.post(ask(ONE, TWO));
         assertEquals(emptyList(), transactions);
 
-        transactions = book.post(new Offer(PAIR, Bid, ONE, ONE));
+        transactions = book.post(bid(ONE, ONE));
         assertEquals(emptyList(), transactions);
     }
 
     @Test
     void testPostMatchingOfferResultTransaction() {
         OrderBook book = new OrderBook();
-        book.post(new Offer(PAIR, Ask, ONE, ONE));
-        List<Transaction> txs = book.post(new Offer(PAIR, Bid, ONE, ONE));
+        book.post(ask(ONE, ONE));
+        List<Transaction> txs = book.post(bid(ONE, ONE));
 
         List<Transaction> expectedTxs = singletonList(new Transaction(ONE, ONE));
 
@@ -57,8 +53,8 @@ class OrderBookTest {
 
 
         book = new OrderBook();
-        book.post(new Offer(PAIR, Bid, ONE, ONE));
-        txs = book.post(new Offer(PAIR, Ask, ONE, ONE));
+        book.post(bid(ONE, ONE));
+        txs = book.post(ask(ONE, ONE));
 
         expectedTxs = singletonList(new Transaction(ONE, ONE));
 
@@ -68,9 +64,9 @@ class OrderBookTest {
     @Test
     void testPartialExecAgainstSingleOffer() {
         OrderBook book = new OrderBook();
-        book.post(new Offer(PAIR, Ask, THREE, ONE));
+        book.post(ask(THREE, ONE));
 
-        List<Transaction> txs = book.post(new Offer(PAIR, Bid, TWO, ONE));
+        List<Transaction> txs = book.post(bid(TWO, ONE));
 
         List<Transaction> expectedTxs = singletonList(new Transaction(TWO, ONE));
         assertEquals(expectedTxs, txs);
@@ -79,10 +75,10 @@ class OrderBookTest {
     @Test
     void testPartialExecAgainstMultiOffers() {
         OrderBook book = new OrderBook();
-        book.post(new Offer(PAIR, Ask, ONE, ONE));
-        book.post(new Offer(PAIR, Ask, ONE, ONE));
+        book.post(ask(ONE, ONE));
+        book.post(ask(ONE, ONE));
 
-        List<Transaction> txs = book.post(new Offer(PAIR, Bid, THREE, ONE));
+        List<Transaction> txs = book.post(bid(THREE, ONE));
 
         List<Transaction> expectedTxs = asList(
                 new Transaction(ONE, ONE),
