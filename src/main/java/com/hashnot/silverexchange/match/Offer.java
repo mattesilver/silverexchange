@@ -17,7 +17,7 @@ public class Offer {
     private BigDecimal amount;
     private BigDecimal rate;
 
-    Offer(Object pair, Side side, BigDecimal amount, BigDecimal rate) {
+    public Offer(Object pair, Side side, BigDecimal amount, BigDecimal rate) {
         assert pair != null;
         assert side != null;
         assert amount != null;

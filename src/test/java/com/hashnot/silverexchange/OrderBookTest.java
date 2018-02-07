@@ -10,8 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.hashnot.silverexchange.match.TestOfferFactory.ask;
-import static com.hashnot.silverexchange.match.TestOfferFactory.bid;
+import static com.hashnot.silverexchange.TestModelFactory.ask;
+import static com.hashnot.silverexchange.TestModelFactory.bid;
 import static java.math.BigDecimal.ONE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;

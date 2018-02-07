@@ -1,8 +1,11 @@
-package com.hashnot.silverexchange.match;
+package com.hashnot.silverexchange;
+
+import com.hashnot.silverexchange.match.Offer;
+import com.hashnot.silverexchange.match.Side;
 
 import java.math.BigDecimal;
 
-public class TestOfferFactory {
+public class TestModelFactory {
     private static final Object PAIR = new Object() {
         @Override
         public String toString() {
@@ -16,5 +19,9 @@ public class TestOfferFactory {
 
     public static Offer bid(BigDecimal amount, BigDecimal rate) {
         return new Offer(PAIR, Side.Bid, amount, rate);
+    }
+
+    static Exchange n() {
+        return new Exchange();
     }
 }
