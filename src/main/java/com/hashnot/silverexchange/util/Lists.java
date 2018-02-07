@@ -1,9 +1,9 @@
 package com.hashnot.silverexchange.util;
 
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Objects;
 import java.util.function.Function;
+
+import static com.google.common.collect.Lists.transform;
 
 public class Lists {
     private Lists() {
@@ -13,17 +13,9 @@ public class Lists {
     /**
      * {@link List#lastIndexOf(Object)}
      */
-    public static <T> int lastIndexOf(List<T> c, T e, Function<T, ?> accessor) {
-        Objects.requireNonNull(e);
-        Objects.requireNonNull(accessor);
-
-        ListIterator<T> i = c.listIterator(c.size());
-        int index = c.size();
-        while (i.hasPrevious()) {
-            --index;
-            if (accessor.apply(i.previous()).equals(accessor.apply(e)))
-                return index;
-        }
-        return -1;
+    public static <T, F> int lastIndexOf(List<T> c, T e, Function<T, F> accessor) {
+        @SuppressWarnings("all")
+        List<F> elements = transform(c, accessor::apply);
+        return elements.lastIndexOf(accessor.apply(e));
     }
 }
