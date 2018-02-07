@@ -1,10 +1,10 @@
-package com.hashnot.silver.exchange.util;
+package com.hashnot.silverexchange.util;
 
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static com.hashnot.silver.exchange.util.BigDecimals.gtz;
+import static com.hashnot.silverexchange.util.BigDecimals.gtz;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static org.junit.jupiter.api.Assertions.assertFalse;

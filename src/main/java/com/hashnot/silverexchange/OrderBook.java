@@ -1,10 +1,10 @@
-package com.hashnot.silver.exchange;
+package com.hashnot.silverexchange;
 
-import com.hashnot.silver.engine.ExecutionResult;
-import com.hashnot.silver.engine.Offer;
-import com.hashnot.silver.engine.Side;
-import com.hashnot.silver.engine.Transaction;
-import com.hashnot.silver.exchange.util.Lists;
+import com.hashnot.silverexchange.match.ExecutionResult;
+import com.hashnot.silverexchange.match.Offer;
+import com.hashnot.silverexchange.match.Side;
+import com.hashnot.silverexchange.match.Transaction;
+import com.hashnot.silverexchange.util.Lists;
 
 import java.util.*;
 

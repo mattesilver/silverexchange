@@ -1,9 +1,6 @@
-package com.hashnot.silver.engine;
+package com.hashnot.silverexchange.match;
 
 import java.math.BigDecimal;
-
-import static com.hashnot.silver.engine.Side.Ask;
-import static com.hashnot.silver.engine.Side.Bid;
 
 public class TestOfferFactory {
     private static final Object PAIR = new Object() {
@@ -14,10 +11,10 @@ public class TestOfferFactory {
     };
 
     public static Offer ask(BigDecimal amount, BigDecimal rate) {
-        return new Offer(PAIR, Ask, amount, rate);
+        return new Offer(PAIR, Side.Ask, amount, rate);
     }
 
     public static Offer bid(BigDecimal amount, BigDecimal rate) {
-        return new Offer(PAIR, Bid, amount, rate);
+        return new Offer(PAIR, Side.Bid, amount, rate);
     }
 }

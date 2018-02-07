@@ -1,4 +1,4 @@
-package com.hashnot.silver.exchange.util;
+package com.hashnot.silverexchange.util;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;

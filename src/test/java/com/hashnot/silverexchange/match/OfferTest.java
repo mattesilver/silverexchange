@@ -1,12 +1,12 @@
-package com.hashnot.silver.engine;
+package com.hashnot.silverexchange.match;
 
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static com.hashnot.silver.engine.TestOfferFactory.ask;
-import static com.hashnot.silver.engine.TestOfferFactory.bid;
+import static com.hashnot.silverexchange.match.TestOfferFactory.ask;
+import static com.hashnot.silverexchange.match.TestOfferFactory.bid;
 import static java.math.BigDecimal.ONE;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;

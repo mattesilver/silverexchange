@@ -1,4 +1,4 @@
-package com.hashnot.silver.engine;
+package com.hashnot.silverexchange.match;
 
 /**
  * A result of a single atomic execution of one {@link Offer} against another.

@@ -1,4 +1,4 @@
-package com.hashnot.silver.exchange.util;
+package com.hashnot.silverexchange.util;
 
 import java.util.List;
 import java.util.ListIterator;

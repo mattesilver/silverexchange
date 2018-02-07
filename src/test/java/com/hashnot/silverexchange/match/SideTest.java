@@ -1,9 +1,9 @@
-package com.hashnot.silver.engine;
+package com.hashnot.silverexchange.match;
 
 import org.junit.jupiter.api.Test;
 
-import static com.hashnot.silver.engine.Side.Ask;
-import static com.hashnot.silver.engine.Side.Bid;
+import static com.hashnot.silverexchange.match.Side.Ask;
+import static com.hashnot.silverexchange.match.Side.Bid;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SideTest {

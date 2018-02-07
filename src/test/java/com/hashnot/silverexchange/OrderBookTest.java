@@ -1,7 +1,7 @@
-package com.hashnot.silver.exchange;
+package com.hashnot.silverexchange;
 
-import com.hashnot.silver.engine.Offer;
-import com.hashnot.silver.engine.Transaction;
+import com.hashnot.silverexchange.match.Offer;
+import com.hashnot.silverexchange.match.Transaction;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -10,8 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.hashnot.silver.engine.TestOfferFactory.ask;
-import static com.hashnot.silver.engine.TestOfferFactory.bid;
+import static com.hashnot.silverexchange.match.TestOfferFactory.ask;
+import static com.hashnot.silverexchange.match.TestOfferFactory.bid;
 import static java.math.BigDecimal.ONE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
