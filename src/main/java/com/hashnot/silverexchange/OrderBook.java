@@ -1,6 +1,6 @@
 package com.hashnot.silverexchange;
 
-import com.hashnot.silverexchange.match.ExecutionResult;
+import com.hashnot.silverexchange.match.OfferExecutionResult;
 import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.match.Side;
 import com.hashnot.silverexchange.match.Transaction;
@@ -39,7 +39,7 @@ public class OrderBook {
         Offer handled = offer;
         do {
             Offer against = otherOffers.get(0);
-            ExecutionResult execResult = handled.execute(against);
+            OfferExecutionResult execResult = handled.execute(against);
             if (execResult.transaction != null)
                 result.add(execResult.transaction);
 

@@ -32,7 +32,7 @@ class OfferTest {
         Offer offer = ask(ONE, RATE);
 
 
-        ExecutionResult result = offer.execute(against);
+        OfferExecutionResult result = offer.execute(against);
 
 
         assertNull(result.againstRemainder);
@@ -49,7 +49,7 @@ class OfferTest {
         Offer offer = ask(THREE, RATE);
 
 
-        ExecutionResult result = offer.execute(against);
+        OfferExecutionResult result = offer.execute(against);
 
         assertNull(result.againstRemainder);
 
@@ -67,7 +67,7 @@ class OfferTest {
         Offer offer = ask(TWO, RATE);
 
 
-        ExecutionResult result = offer.execute(against);
+        OfferExecutionResult result = offer.execute(against);
 
         assertNull(result.remainder);
 
@@ -84,7 +84,7 @@ class OfferTest {
         Offer offer = ask(TWO, TWO);
 
 
-        ExecutionResult result = offer.execute(against);
+        OfferExecutionResult result = offer.execute(against);
 
         assertNull(result.transaction);
 

@@ -4,7 +4,7 @@ package com.hashnot.silverexchange.match;
  * A result of a single atomic execution of one {@link Offer} against another.
  * All fields are nullable
  */
-public class ExecutionResult {
+public class OfferExecutionResult {
     /**
      * If the execution was successful, this field contains the resulting transaction.
      */
@@ -20,7 +20,7 @@ public class ExecutionResult {
      */
     public final Offer againstRemainder;
 
-    ExecutionResult(Transaction transaction, Offer remainder, Offer againstRemainder) {
+    OfferExecutionResult(Transaction transaction, Offer remainder, Offer againstRemainder) {
         this.transaction = transaction;
         this.remainder = remainder;
         this.againstRemainder = againstRemainder;

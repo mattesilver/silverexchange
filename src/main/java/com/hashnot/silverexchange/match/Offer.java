@@ -50,20 +50,20 @@ public class Offer {
     /**
      * @param against an offer from the order book, against which <code>this</code> order is executed
      */
-    public ExecutionResult execute(Offer against) {
+    public OfferExecutionResult execute(Offer against) {
         assert pair.equals(against.pair) : "Not executing against offer of the same pair";
         assert side != against.side : "Not executing against offer of opposite side";
 
         if (!rateMatch(against)) {
             // no execution due to no price match
-            return new ExecutionResult(null, this, against);
+            return new OfferExecutionResult(null, this, against);
         }
 
         BigDecimal amountDiff = amount.subtract(against.amount);
         int amountDiffSig = amountDiff.signum();
         if (amountDiffSig == 0)
             // 1-to-1 match
-            return new ExecutionResult(new Transaction(amount, against.rate), null, null);
+            return new OfferExecutionResult(new Transaction(amount, against.rate), null, null);
 
         // here we have to null either of remainders in the result
         Offer remainder,
@@ -84,7 +84,7 @@ public class Offer {
             tx = new Transaction(amount, against.rate);
         }
 
-        return new ExecutionResult(tx, remainder, againstRemainder);
+        return new OfferExecutionResult(tx, remainder, againstRemainder);
     }
 
     boolean rateMatch(Offer against) {
