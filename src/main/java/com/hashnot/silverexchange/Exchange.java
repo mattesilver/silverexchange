@@ -13,8 +13,8 @@ public class Exchange {
     private List<Transaction> transactions = new LinkedList<>();
 
     public void post(Offer o) {
-        List<Transaction> result = orderBook.post(o);
-        this.transactions.addAll(result);
+        ExecutionResult result = orderBook.post(o);
+        this.transactions.addAll(result.transactions);
     }
 
     public List<Transaction> getAllTransactions() {

@@ -1,13 +1,23 @@
 package com.hashnot.silverexchange.match;
 
+import com.hashnot.silverexchange.OfferRate;
+import com.hashnot.silverexchange.TransactionRate;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Transaction {
     private final BigDecimal amount;
-    private final BigDecimal rate;
+    private final TransactionRate rate;
 
-    public Transaction(BigDecimal amount, BigDecimal rate) {
+    public Transaction(BigDecimal amount, OfferRate rate) {
+        this(amount, TransactionRate.from(rate));
+    }
+
+    public Transaction(BigDecimal amount, TransactionRate rate) {
+        assert amount != null : "Null transaction amount";
+        assert rate != null : "Null transaction rate";
+
         this.rate = rate;
         this.amount = amount;
     }

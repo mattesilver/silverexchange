@@ -1,5 +1,6 @@
 package com.hashnot.silverexchange.match;
 
+import com.hashnot.silverexchange.OfferRate;
 import com.hashnot.silverexchange.util.BigDecimals;
 
 import java.math.BigDecimal;
@@ -10,29 +11,29 @@ import java.util.Objects;
  * Private API
  */
 public class Offer {
-    public static final Comparator<Offer> COMPARATOR_BY_RATE = (a, b) ->  a.getRate().compareTo(b.getRate()) * a.getSide().orderSignum;
+    public static final Comparator<Offer> COMPARATOR_BY_RATE = Offer::compareByRate;
 
     private Object pair;
     private Side side;
     private BigDecimal amount;
-    private BigDecimal rate;
+    private OfferRate rate;
 
-    public Offer(Object pair, Side side, BigDecimal amount, BigDecimal rate) {
+    public Offer(Object pair, Side side, BigDecimal amount, OfferRate rate) {
         assert pair != null;
         assert side != null;
         assert amount != null;
-        assert rate != null;
 
         if (!BigDecimals.gtz(amount))
             throw new IllegalArgumentException("Non-positive amount");
-
-        if (!BigDecimals.gtz(rate))
-            throw new IllegalArgumentException("Non-positive rate");
 
         this.pair = pair;
         this.side = side;
         this.amount = amount;
         this.rate = rate;
+    }
+
+    public static int compareByRate(Offer a, Offer b) {
+        return a.getRate().compareTo(b.getRate()) * a.getSide().orderSignum;
     }
 
     public Object getPair() {
@@ -43,7 +44,7 @@ public class Offer {
         return side;
     }
 
-    public BigDecimal getRate() {
+    public OfferRate getRate() {
         return rate;
     }
 
@@ -89,8 +90,11 @@ public class Offer {
 
     boolean rateMatch(Offer against) {
         assert side != against.side;
-        assert BigDecimals.gtz(rate);
         return rate.compareTo(against.rate) * side.orderSignum <= 0;
+    }
+
+    public boolean isMarketOrder() {
+        return rate.isMarket();
     }
 
     @Override

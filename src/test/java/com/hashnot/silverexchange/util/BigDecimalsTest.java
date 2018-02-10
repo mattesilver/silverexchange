@@ -10,7 +10,10 @@ import static java.math.BigDecimal.ZERO;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class BigDecimalsTest {
+public class BigDecimalsTest {
+
+    public static final BigDecimal MINUS_ONE = BigDecimal.ONE.negate();
+    public static final BigDecimal TWO = new BigDecimal(2);
 
     @Test
     void testGtzOnPositive() {

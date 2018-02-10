@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static com.hashnot.silverexchange.TestModelFactory.ask;
-import static com.hashnot.silverexchange.TestModelFactory.bid;
+import static com.hashnot.silverexchange.TestModelFactory.*;
 import static java.math.BigDecimal.ONE;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,7 +37,7 @@ class OfferTest {
         assertNull(result.againstRemainder);
         assertNull(result.remainder);
 
-        Transaction expectedTx = new Transaction(ONE, RATE);
+        Transaction expectedTx = tx(ONE, RATE);
         assertEquals(expectedTx, result.transaction);
     }
 
@@ -56,7 +55,7 @@ class OfferTest {
         Offer expectedRemainder = ask(TWO, offer.getRate());
         assertEquals(expectedRemainder, result.remainder);
 
-        Transaction expectedTx = new Transaction(ONE, RATE);
+        Transaction expectedTx = tx(ONE, RATE);
         assertEquals(expectedTx, result.transaction);
     }
 
@@ -74,7 +73,7 @@ class OfferTest {
         Offer expectedAgainstRemainder = bid(ONE, against.getRate());
         assertEquals(expectedAgainstRemainder, result.againstRemainder);
 
-        Transaction expectedTx = new Transaction(TWO, RATE);
+        Transaction expectedTx = tx(TWO, RATE);
         assertEquals(expectedTx, result.transaction);
     }
 
@@ -149,5 +148,23 @@ class OfferTest {
 
         List<Offer> expected = asList(o1, o2);
         assertEquals(expected, offers);
+    }
+
+    @Test
+    void createMarketOrder() {
+        ask(ONE, market());
+        bid(ONE, market());
+        // no exceptions
+    }
+
+    @Test
+    void testMarketOrderAgainstMatchingOffer() {
+        Offer existing = ask(ONE, ONE);
+        Offer market = bid(ONE, market());
+
+        OfferExecutionResult result = market.execute(existing);
+
+        OfferExecutionResult expected = new OfferExecutionResult(tx(ONE, ONE), null, null);
+        assertEquals(expected, result);
     }
 }
