@@ -1,8 +1,7 @@
 # gradle
 /.gradle/
-/build/
-/out/
-/gradle/
+build/
+out/
 
 # IntelliJ project files
 /.idea/

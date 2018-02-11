@@ -8,3 +8,5 @@
  */
 
 rootProject.name = 'silverexchange'
+include 'silverexchange-core'
+
