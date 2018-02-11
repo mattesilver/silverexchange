@@ -1,10 +1,12 @@
 package com.hashnot.silverexchange.match;
 
+import java.util.Objects;
+
 /**
  * A result of a single atomic execution of one {@link Offer} against another.
  * All fields are nullable
  */
-public class ExecutionResult {
+public class OfferExecutionResult {
     /**
      * If the execution was successful, this field contains the resulting transaction.
      */
@@ -20,7 +22,7 @@ public class ExecutionResult {
      */
     public final Offer againstRemainder;
 
-    ExecutionResult(Transaction transaction, Offer remainder, Offer againstRemainder) {
+    OfferExecutionResult(Transaction transaction, Offer remainder, Offer againstRemainder) {
         this.transaction = transaction;
         this.remainder = remainder;
         this.againstRemainder = againstRemainder;
@@ -33,5 +35,27 @@ public class ExecutionResult {
                         + ", remainder=" + remainder
                         + ", againstRemainder=" + againstRemainder
                 ;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o || o instanceof OfferExecutionResult && equals((OfferExecutionResult) o);
+    }
+
+    private boolean equals(OfferExecutionResult r) {
+        return
+                Objects.equals(transaction, r.transaction)
+                        && Objects.equals(remainder, r.remainder)
+                        && Objects.equals(againstRemainder, r.againstRemainder)
+                ;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                transaction,
+                remainder,
+                againstRemainder
+        );
     }
 }

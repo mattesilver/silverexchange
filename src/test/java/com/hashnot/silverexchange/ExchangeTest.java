@@ -1,11 +1,8 @@
 package com.hashnot.silverexchange;
 
-import com.hashnot.silverexchange.match.Transaction;
 import org.junit.jupiter.api.Test;
 
-import static com.hashnot.silverexchange.TestModelFactory.ask;
-import static com.hashnot.silverexchange.TestModelFactory.bid;
-import static com.hashnot.silverexchange.TestModelFactory.n;
+import static com.hashnot.silverexchange.TestModelFactory.*;
 import static java.math.BigDecimal.ONE;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -43,7 +40,7 @@ class ExchangeTest {
         x.post(bid(ONE, ONE));
         assertTrue(x.getAllOffers().isEmpty());
 
-        assertEquals(singletonList(new Transaction(ONE, ONE)), x.getAllTransactions());
+        assertEquals(singletonList(tx(ONE, ONE)), x.getAllTransactions());
     }
 
 }

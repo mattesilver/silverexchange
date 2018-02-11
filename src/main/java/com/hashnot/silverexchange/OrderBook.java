@@ -1,7 +1,7 @@
 package com.hashnot.silverexchange;
 
-import com.hashnot.silverexchange.match.ExecutionResult;
 import com.hashnot.silverexchange.match.Offer;
+import com.hashnot.silverexchange.match.OfferExecutionResult;
 import com.hashnot.silverexchange.match.Side;
 import com.hashnot.silverexchange.match.Transaction;
 import com.hashnot.silverexchange.util.Lists;
@@ -19,29 +19,33 @@ public class OrderBook {
         orderBook.put(Side.Bid, new LinkedList<>());
     }
 
-    public List<Transaction> post(Offer o) {
+    public ExecutionResult post(Offer o) {
         List<Offer> otherSideOffers = orderBook.get(o.getSide().reverse());
         if (otherSideOffers.isEmpty()) {
-            insert(o);
-            return emptyList();
+            if (o.isMarketOrder()) {
+                return new ExecutionResult(emptyList(), o);
+            } else {
+                insert(o);
+                return ExecutionResult.empty();
+            }
         } else {
             return execute(o, otherSideOffers);
         }
     }
 
-    private List<Transaction> execute(Offer offer, List<Offer> otherOffers) {
+    private ExecutionResult execute(Offer offer, List<Offer> otherOffers) {
         assert !otherOffers.isEmpty();
         assert otherOffers.get(0).getSide() != offer.getSide();
         assert otherOffers.get(0).getPair().equals(offer.getPair());
 
-        List<Transaction> result = new LinkedList<>();
+        List<Transaction> transactions = new LinkedList<>();
 
         Offer handled = offer;
         do {
             Offer against = otherOffers.get(0);
-            ExecutionResult execResult = handled.execute(against);
+            OfferExecutionResult execResult = handled.execute(against);
             if (execResult.transaction != null)
-                result.add(execResult.transaction);
+                transactions.add(execResult.transaction);
 
             handled = execResult.remainder;
 
@@ -54,10 +58,12 @@ public class OrderBook {
 
         } while (!otherOffers.isEmpty() && handled != null);
 
-        if (handled != null)
+        if (handled != null && !handled.isMarketOrder()) {
             insert(handled);
+            handled = null;
+        }
 
-        return result;
+        return new ExecutionResult(transactions, handled);
     }
 
     private void insert(Offer o) {

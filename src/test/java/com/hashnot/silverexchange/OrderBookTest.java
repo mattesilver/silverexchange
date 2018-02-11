@@ -10,23 +10,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.hashnot.silverexchange.TestModelFactory.ask;
-import static com.hashnot.silverexchange.TestModelFactory.bid;
-import static java.math.BigDecimal.ONE;
+import static com.hashnot.silverexchange.ExecutionResult.empty;
+import static com.hashnot.silverexchange.TestModelFactory.*;
+import static com.hashnot.silverexchange.util.BigDecimalsTest.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class OrderBookTest {
-    private static final BigDecimal TWO = new BigDecimal(2);
-    private static final BigDecimal THREE = new BigDecimal(3);
-
 
     @Test
     void postValidOfferToEmptyBookEmptyResult() {
-        List<Transaction> transactions = new OrderBook().post(ask(ONE, TWO));
-        assertEquals(emptyList(), transactions);
+        ExecutionResult transactions = new OrderBook().post(ask(ONE, TWO));
+        assertEquals(empty(), transactions);
     }
 
     @Test
@@ -34,31 +31,31 @@ class OrderBookTest {
         OrderBook book = new OrderBook();
 
         book.post(ask(ONE, TWO));
-        List<Transaction> transactions = book.post(ask(ONE, TWO));
-        assertEquals(emptyList(), transactions);
+        ExecutionResult transactions = book.post(ask(ONE, TWO));
+        assertEquals(empty(), transactions);
 
         transactions = book.post(bid(ONE, ONE));
-        assertEquals(emptyList(), transactions);
+        assertEquals(empty(), transactions);
     }
 
     @Test
     void testPostMatchingOfferResultTransaction() {
         OrderBook book = new OrderBook();
         book.post(ask(ONE, ONE));
-        List<Transaction> txs = book.post(bid(ONE, ONE));
+        ExecutionResult result = book.post(bid(ONE, ONE));
 
-        List<Transaction> expectedTxs = singletonList(new Transaction(ONE, ONE));
+        List<Transaction> expectedTxs = singletonList(tx(ONE, ONE));
 
-        assertEquals(expectedTxs, txs);
+        assertEquals(new ExecutionResult(expectedTxs, null), result);
 
 
         book = new OrderBook();
         book.post(bid(ONE, ONE));
-        txs = book.post(ask(ONE, ONE));
+        result = book.post(ask(ONE, ONE));
 
-        expectedTxs = singletonList(new Transaction(ONE, ONE));
+        expectedTxs = singletonList(tx(ONE, ONE));
 
-        assertEquals(expectedTxs, txs);
+        assertEquals(new ExecutionResult(expectedTxs, null), result);
     }
 
     @Test
@@ -66,10 +63,10 @@ class OrderBookTest {
         OrderBook book = new OrderBook();
         book.post(ask(THREE, ONE));
 
-        List<Transaction> txs = book.post(bid(TWO, ONE));
+        ExecutionResult result = book.post(bid(TWO, ONE));
 
-        List<Transaction> expectedTxs = singletonList(new Transaction(TWO, ONE));
-        assertEquals(expectedTxs, txs);
+        List<Transaction> expectedTxs = singletonList(tx(TWO, ONE));
+        assertEquals(new ExecutionResult(expectedTxs, null), result);
     }
 
     @Test
@@ -78,13 +75,13 @@ class OrderBookTest {
         book.post(ask(ONE, ONE));
         book.post(ask(ONE, ONE));
 
-        List<Transaction> txs = book.post(bid(THREE, ONE));
+        ExecutionResult result = book.post(bid(THREE, ONE));
 
         List<Transaction> expectedTxs = asList(
-                new Transaction(ONE, ONE),
-                new Transaction(ONE, ONE)
+                tx(ONE, ONE),
+                tx(ONE, ONE)
         );
-        assertEquals(expectedTxs, txs);
+        assertEquals(new ExecutionResult(expectedTxs, null), result);
     }
 
     @Test
@@ -156,5 +153,73 @@ class OrderBookTest {
                 .mapToObj(input::get)
                 .collect(Collectors.toList());
         assertEquals(expected, book.getAllOffers());
+    }
+
+    @Test
+    void testMarketOrderOnEmptyOrderBook() {
+        //given
+        OrderBook book = new OrderBook();
+
+        //when
+        ExecutionResult result = book.post(bid(ONE, market()));
+
+        //expect
+        assertEquals(new ExecutionResult(emptyList(), bid(ONE, market())), result);
+    }
+
+    @Test
+    void testMarketOrderAgainstOrderBookWithNonMatchingOrder() {
+        //given
+        OrderBook book = new OrderBook();
+        book.post(bid(ONE, ONE));
+
+        //when
+        ExecutionResult result = book.post(bid(ONE, market()));
+
+        //expect
+        assertEquals(new ExecutionResult(emptyList(), bid(ONE, market())), result);
+        assertEquals(singletonList(bid(ONE, ONE)), book.getAllOffers());
+    }
+
+    @Test
+    void testMarketOrderAgainstOrderBookWithMatchingOrder() {
+        //given
+        OrderBook book = new OrderBook();
+        book.post(ask(ONE, ONE));
+
+        //when
+        ExecutionResult result = book.post(bid(ONE, market()));
+
+        //expect
+        assertEquals(new ExecutionResult(singletonList(tx(ONE, ONE)), null), result);
+        assertEquals(emptyList(), book.getAllOffers());
+    }
+
+    @Test
+    void testPartialExecutionOfMarketOrderInOrderBook() {
+        //given
+        OrderBook book = new OrderBook();
+        book.post(ask(ONE, ONE));
+
+        //when
+        ExecutionResult result = book.post(bid(TWO, market()));
+
+        //expect
+        assertEquals(new ExecutionResult(singletonList(tx(ONE, ONE)), bid(ONE, market())), result);
+        assertEquals(emptyList(), book.getAllOffers());
+    }
+
+    @Test
+    void testPartialExecutionOfMarketOrderInOrderBookWithRemainderInOrderBook() {
+        //given
+        OrderBook book = new OrderBook();
+        book.post(ask(TWO, ONE));
+
+        //when
+        ExecutionResult result = book.post(bid(ONE, market()));
+
+        //expect
+        assertEquals(new ExecutionResult(singletonList(tx(ONE, ONE)), null), result);
+        assertEquals(singletonList(ask(ONE, ONE)), book.getAllOffers());
     }
 }
