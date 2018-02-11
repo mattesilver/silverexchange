@@ -18,7 +18,6 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-// TODO test market orders
 class OrderBookTest {
 
     @Test
@@ -154,5 +153,73 @@ class OrderBookTest {
                 .mapToObj(input::get)
                 .collect(Collectors.toList());
         assertEquals(expected, book.getAllOffers());
+    }
+
+    @Test
+    void testMarketOrderOnEmptyOrderBook() {
+        //given
+        OrderBook book = new OrderBook();
+
+        //when
+        ExecutionResult result = book.post(bid(ONE, market()));
+
+        //expect
+        assertEquals(new ExecutionResult(emptyList(), bid(ONE, market())), result);
+    }
+
+    @Test
+    void testMarketOrderAgainstOrderBookWithNonMatchingOrder() {
+        //given
+        OrderBook book = new OrderBook();
+        book.post(bid(ONE, ONE));
+
+        //when
+        ExecutionResult result = book.post(bid(ONE, market()));
+
+        //expect
+        assertEquals(new ExecutionResult(emptyList(), bid(ONE, market())), result);
+        assertEquals(singletonList(bid(ONE, ONE)), book.getAllOffers());
+    }
+
+    @Test
+    void testMarketOrderAgainstOrderBookWithMatchingOrder() {
+        //given
+        OrderBook book = new OrderBook();
+        book.post(ask(ONE, ONE));
+
+        //when
+        ExecutionResult result = book.post(bid(ONE, market()));
+
+        //expect
+        assertEquals(new ExecutionResult(singletonList(tx(ONE, ONE)), null), result);
+        assertEquals(emptyList(), book.getAllOffers());
+    }
+
+    @Test
+    void testPartialExecutionOfMarketOrderInOrderBook() {
+        //given
+        OrderBook book = new OrderBook();
+        book.post(ask(ONE, ONE));
+
+        //when
+        ExecutionResult result = book.post(bid(TWO, market()));
+
+        //expect
+        assertEquals(new ExecutionResult(singletonList(tx(ONE, ONE)), bid(ONE, market())), result);
+        assertEquals(emptyList(), book.getAllOffers());
+    }
+
+    @Test
+    void testPartialExecutionOfMarketOrderInOrderBookWithRemainderInOrderBook() {
+        //given
+        OrderBook book = new OrderBook();
+        book.post(ask(TWO, ONE));
+
+        //when
+        ExecutionResult result = book.post(bid(ONE, market()));
+
+        //expect
+        assertEquals(new ExecutionResult(singletonList(tx(ONE, ONE)), null), result);
+        assertEquals(singletonList(ask(ONE, ONE)), book.getAllOffers());
     }
 }

@@ -8,6 +8,8 @@ import com.hashnot.silverexchange.util.Lists;
 
 import java.util.*;
 
+import static java.util.Collections.emptyList;
+
 public class OrderBook {
     private Map<Side, List<Offer>> orderBook = new EnumMap<>(Side.class);
 
@@ -20,8 +22,12 @@ public class OrderBook {
     public ExecutionResult post(Offer o) {
         List<Offer> otherSideOffers = orderBook.get(o.getSide().reverse());
         if (otherSideOffers.isEmpty()) {
-            insert(o);
-            return ExecutionResult.empty();
+            if (o.isMarketOrder()) {
+                return new ExecutionResult(emptyList(), o);
+            } else {
+                insert(o);
+                return ExecutionResult.empty();
+            }
         } else {
             return execute(o, otherSideOffers);
         }

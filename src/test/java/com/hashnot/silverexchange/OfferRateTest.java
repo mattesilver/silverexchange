@@ -2,15 +2,22 @@ package com.hashnot.silverexchange;
 
 import org.junit.jupiter.api.Test;
 
-import static java.math.BigDecimal.ONE;
+import static com.hashnot.silverexchange.TestModelFactory.market;
+import static com.hashnot.silverexchange.util.BigDecimalsTest.ONE;
+import static com.hashnot.silverexchange.util.BigDecimalsTest.TWO;
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO add more tests
 class OfferRateTest {
     @Test
     void testNullValueIsMarket() {
         OfferRate r = new OfferRate(null);
         assertTrue(r.isMarket());
+    }
+
+    @Test
+    void testNullValueToStringNoError() {
+        OfferRate r = new OfferRate(null);
+        assertNotNull(r.toString());
     }
 
     @Test
@@ -37,5 +44,37 @@ class OfferRateTest {
                 r2 = new OfferRate(ONE);
         assertEquals(r1, r2);
         assertEquals(r1.compareTo(r2), 0);
+    }
+
+    @Test
+    void testCompareEqual() {
+        OfferRate r1 = new OfferRate(ONE);
+        OfferRate r2 = new OfferRate(ONE);
+        assertEquals(0, r1.compareTo(r2));
+        assertEquals(0, r2.compareTo(r1));
+    }
+
+    @Test
+    void testCompareDifferent() {
+        OfferRate r1 = new OfferRate(ONE);
+        OfferRate r2 = new OfferRate(TWO);
+        assertTrue(r1.compareTo(r2) < 0);
+        assertTrue(r2.compareTo(r1) > 0);
+    }
+
+    @Test
+    void testCompare2NullsError() {
+        OfferRate r1 = market();
+        OfferRate r2 = market();
+        assertThrows(IllegalArgumentException.class, () -> r1.compareTo(r2));
+        assertThrows(IllegalArgumentException.class, () -> r2.compareTo(r1));
+    }
+
+    @Test
+    void testCompareAgainstNull() {
+        OfferRate r1 = new OfferRate(ONE);
+        OfferRate r2 = market();
+        assertTrue(r1.compareTo(r2) < 0);
+        assertTrue(r2.compareTo(r1) > 0);
     }
 }
