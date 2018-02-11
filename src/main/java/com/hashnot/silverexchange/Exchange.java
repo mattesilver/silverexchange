@@ -12,9 +12,16 @@ public class Exchange {
     private OrderBook orderBook = new OrderBook();
     private List<Transaction> transactions = new LinkedList<>();
 
-    public void post(Offer o) {
+    /**
+     * Execute o as an order. If o is a Market Order it may return remaining part as another Offer object. All executed transactions are added to the internal transactions list.
+     *
+     * @param o an offer to execute against the order book
+     * @return Non-executed part of an offer represented by the parameter
+     */
+    public Offer post(Offer o) {
         ExecutionResult result = orderBook.post(o);
         this.transactions.addAll(result.transactions);
+        return result.remainder;
     }
 
     public List<Transaction> getAllTransactions() {
