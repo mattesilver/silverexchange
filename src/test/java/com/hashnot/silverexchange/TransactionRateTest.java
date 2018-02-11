@@ -2,10 +2,7 @@ package com.hashnot.silverexchange;
 
 import org.junit.jupiter.api.Test;
 
-import static com.hashnot.silverexchange.util.BigDecimalsTest.MINUS_ONE;
-import static com.hashnot.silverexchange.util.BigDecimalsTest.TWO;
-import static java.math.BigDecimal.ONE;
-import static java.math.BigDecimal.ZERO;
+import static com.hashnot.silverexchange.util.BigDecimalsTest.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TransactionRateTest {

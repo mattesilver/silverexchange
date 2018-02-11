@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import static com.hashnot.silverexchange.ExecutionResult.empty;
 import static com.hashnot.silverexchange.TestModelFactory.*;
-import static java.math.BigDecimal.ONE;
+import static com.hashnot.silverexchange.util.BigDecimalsTest.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -20,9 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 // TODO test market orders
 class OrderBookTest {
-    private static final BigDecimal TWO = new BigDecimal(2);
-    private static final BigDecimal THREE = new BigDecimal(3);
-
 
     @Test
     void postValidOfferToEmptyBookEmptyResult() {
