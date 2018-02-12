@@ -6,13 +6,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static com.hashnot.silverexchange.TestModelFactory.*;
-import static java.math.BigDecimal.ONE;
+import static com.hashnot.silverexchange.util.BigDecimalsTest.*;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 
+// TODO rename variable RATE to lower-case
 class OfferTest {
-    private static final BigDecimal TWO = new BigDecimal(2);
-    private static final BigDecimal THREE = new BigDecimal(3);
 
     @Test
     void testExceptionOnNonPositiveRate() {
@@ -31,7 +30,7 @@ class OfferTest {
         Offer offer = ask(ONE, RATE);
 
 
-        OfferExecutionResult result = offer.execute(against);
+        OfferExecutionResult result = offer.execute(against, CLOCK);
 
 
         assertNull(result.againstRemainder);
@@ -48,7 +47,7 @@ class OfferTest {
         Offer offer = ask(THREE, RATE);
 
 
-        OfferExecutionResult result = offer.execute(against);
+        OfferExecutionResult result = offer.execute(against, CLOCK);
 
         assertNull(result.againstRemainder);
 
@@ -66,7 +65,7 @@ class OfferTest {
         Offer offer = ask(TWO, RATE);
 
 
-        OfferExecutionResult result = offer.execute(against);
+        OfferExecutionResult result = offer.execute(against, CLOCK);
 
         assertNull(result.remainder);
 
@@ -83,7 +82,7 @@ class OfferTest {
         Offer offer = ask(TWO, TWO);
 
 
-        OfferExecutionResult result = offer.execute(against);
+        OfferExecutionResult result = offer.execute(against, CLOCK);
 
         assertNull(result.transaction);
 
@@ -162,7 +161,7 @@ class OfferTest {
         Offer existing = ask(ONE, ONE);
         Offer market = bid(ONE, market());
 
-        OfferExecutionResult result = market.execute(existing);
+        OfferExecutionResult result = market.execute(existing, CLOCK);
 
         OfferExecutionResult expected = new OfferExecutionResult(tx(ONE, ONE), null, null);
         assertEquals(expected, result);

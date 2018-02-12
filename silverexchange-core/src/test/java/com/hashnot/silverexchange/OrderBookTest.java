@@ -22,13 +22,13 @@ class OrderBookTest {
 
     @Test
     void postValidOfferToEmptyBookEmptyResult() {
-        ExecutionResult transactions = new OrderBook().post(ask(ONE, TWO));
+        ExecutionResult transactions = b().post(ask(ONE, TWO));
         assertEquals(empty(), transactions);
     }
 
     @Test
     void postValidNonMatchingOfferToNonEmptyBookEmptyResult() {
-        OrderBook book = new OrderBook();
+        OrderBook book = b();
 
         book.post(ask(ONE, TWO));
         ExecutionResult transactions = book.post(ask(ONE, TWO));
@@ -40,7 +40,7 @@ class OrderBookTest {
 
     @Test
     void testPostMatchingOfferResultTransaction() {
-        OrderBook book = new OrderBook();
+        OrderBook book = b();
         book.post(ask(ONE, ONE));
         ExecutionResult result = book.post(bid(ONE, ONE));
 
@@ -49,7 +49,7 @@ class OrderBookTest {
         assertEquals(new ExecutionResult(expectedTxs, null), result);
 
 
-        book = new OrderBook();
+        book = b();
         book.post(bid(ONE, ONE));
         result = book.post(ask(ONE, ONE));
 
@@ -60,7 +60,7 @@ class OrderBookTest {
 
     @Test
     void testPartialExecAgainstSingleOffer() {
-        OrderBook book = new OrderBook();
+        OrderBook book = b();
         book.post(ask(THREE, ONE));
 
         ExecutionResult result = book.post(bid(TWO, ONE));
@@ -71,7 +71,7 @@ class OrderBookTest {
 
     @Test
     void testPartialExecAgainstMultiOffers() {
-        OrderBook book = new OrderBook();
+        OrderBook book = b();
         book.post(ask(ONE, ONE));
         book.post(ask(ONE, ONE));
 
@@ -86,14 +86,14 @@ class OrderBookTest {
 
     @Test
     void testEmptyOfferList() {
-        OrderBook book = new OrderBook();
+        OrderBook book = b();
         assertEquals(emptyList(), book.getAllOffers());
     }
 
     @Test
     void testSingleOfferList() {
         Offer offer = ask(ONE, ONE);
-        OrderBook book = new OrderBook();
+        OrderBook book = b();
         book.post(offer);
 
         assertEquals(singletonList(offer), book.getAllOffers());
@@ -103,7 +103,7 @@ class OrderBookTest {
     void testMultiOfferList() {
         Offer offer1 = ask(ONE, ONE);
         Offer offer2 = ask(ONE, ONE);
-        OrderBook book = new OrderBook();
+        OrderBook book = b();
         book.post(offer1);
         book.post(offer2);
 
@@ -112,7 +112,7 @@ class OrderBookTest {
 
     @Test
     void testOfferListOrder() {
-        OrderBook book = new OrderBook();
+        OrderBook book = b();
 
         Offer offer1 = bid(ONE, ONE);
         book.post(offer1);
@@ -132,7 +132,7 @@ class OrderBookTest {
 
     @Test
     void testNewElementIsAfterOtherWithSameRate() {
-        OrderBook book = new OrderBook();
+        OrderBook book = b();
 
         // generate a bunch of orders and make sure orderbook returns them in the same order (bids reversed)
 
@@ -158,7 +158,7 @@ class OrderBookTest {
     @Test
     void testMarketOrderOnEmptyOrderBook() {
         //given
-        OrderBook book = new OrderBook();
+        OrderBook book = b();
 
         //when
         ExecutionResult result = book.post(bid(ONE, market()));
@@ -170,7 +170,7 @@ class OrderBookTest {
     @Test
     void testMarketOrderAgainstOrderBookWithNonMatchingOrder() {
         //given
-        OrderBook book = new OrderBook();
+        OrderBook book = b();
         book.post(bid(ONE, ONE));
 
         //when
@@ -184,7 +184,7 @@ class OrderBookTest {
     @Test
     void testMarketOrderAgainstOrderBookWithMatchingOrder() {
         //given
-        OrderBook book = new OrderBook();
+        OrderBook book = b();
         book.post(ask(ONE, ONE));
 
         //when
@@ -198,7 +198,7 @@ class OrderBookTest {
     @Test
     void testPartialExecutionOfMarketOrderInOrderBook() {
         //given
-        OrderBook book = new OrderBook();
+        OrderBook book = b();
         book.post(ask(ONE, ONE));
 
         //when
@@ -212,7 +212,7 @@ class OrderBookTest {
     @Test
     void testPartialExecutionOfMarketOrderInOrderBookWithRemainderInOrderBook() {
         //given
-        OrderBook book = new OrderBook();
+        OrderBook book = b();
         book.post(ask(TWO, ONE));
 
         //when

@@ -4,6 +4,7 @@ import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.match.OfferExecutionResult;
 import com.hashnot.silverexchange.match.Side;
 import com.hashnot.silverexchange.match.Transaction;
+import com.hashnot.silverexchange.util.Clock;
 import com.hashnot.silverexchange.util.Lists;
 
 import java.util.*;
@@ -11,12 +12,17 @@ import java.util.*;
 import static java.util.Collections.emptyList;
 
 public class OrderBook {
-    private Map<Side, List<Offer>> orderBook = new EnumMap<>(Side.class);
+    private final Clock clock;
+    private final Map<Side, List<Offer>> orderBook = new EnumMap<>(Side.class);
 
     {
         // these lists will be more or less as frequently searched as inserted to, use LinkedList for now.
         orderBook.put(Side.Ask, new LinkedList<>());
         orderBook.put(Side.Bid, new LinkedList<>());
+    }
+
+    OrderBook(Clock clock) {
+        this.clock = clock;
     }
 
     public ExecutionResult post(Offer o) {
@@ -43,7 +49,7 @@ public class OrderBook {
         Offer handled = offer;
         do {
             Offer against = otherOffers.get(0);
-            OfferExecutionResult execResult = handled.execute(against);
+            OfferExecutionResult execResult = handled.execute(against, clock);
             if (execResult.transaction != null)
                 transactions.add(execResult.transaction);
 
