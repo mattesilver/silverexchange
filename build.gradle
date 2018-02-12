@@ -12,3 +12,7 @@ version = '1.0'
 repositories {
     mavenCentral()
 }
+
+ext{
+    v_junit = "5.0.3"
+}
