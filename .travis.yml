@@ -4,4 +4,3 @@ jdk:
   - oraclejdk8
 # Gradle doesn't like jdk9
 #  - oraclejdk9
-  - openjdk8
