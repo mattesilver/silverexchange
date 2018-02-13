@@ -1,6 +1,7 @@
 package com.hashnot.silverexchange;
 
 import com.hashnot.silverexchange.match.Offer;
+import com.hashnot.silverexchange.match.Side;
 import com.hashnot.silverexchange.match.Transaction;
 import org.junit.jupiter.api.Test;
 
@@ -8,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.hashnot.silverexchange.ExecutionResult.empty;
@@ -17,6 +19,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OrderBookTest {
 
@@ -87,7 +90,7 @@ class OrderBookTest {
     @Test
     void testEmptyOfferList() {
         OrderBook book = b();
-        assertEquals(emptyList(), book.getAllOffers());
+        assertTrue(book.isEmpty());
     }
 
     @Test
@@ -96,7 +99,7 @@ class OrderBookTest {
         OrderBook book = b();
         book.post(offer);
 
-        assertEquals(singletonList(offer), book.getAllOffers());
+        assertEquals(sides(emptyList(), singletonList(offer)), book.getAllOffers());
     }
 
     @Test
@@ -107,7 +110,7 @@ class OrderBookTest {
         book.post(offer1);
         book.post(offer2);
 
-        assertEquals(asList(offer1, offer2), book.getAllOffers());
+        assertEquals(sides(emptyList(), asList(offer1, offer2)), book.getAllOffers());
     }
 
     @Test
@@ -126,7 +129,7 @@ class OrderBookTest {
         Offer offer4 = ask(ONE, new BigDecimal(4));
         book.post(offer4);
 
-        List<Offer> expected = asList(offer1, offer2, offer3, offer4);
+        Map<Side, List<Offer>> expected = sides(asList(offer2, offer1), asList(offer3, offer4));
         assertEquals(expected, book.getAllOffers());
     }
 
@@ -148,10 +151,14 @@ class OrderBookTest {
             input.add(bid);
         }
 
-        int[] expectedOrder = {7, 5, 3, 1, 0, 2, 4, 6};
-        List<Offer> expected = Arrays.stream(expectedOrder)
-                .mapToObj(input::get)
-                .collect(Collectors.toList());
+        Map<Side, List<Offer>> expected = sides(
+                Arrays.stream(new int[]{1, 3, 5, 7})
+                        .mapToObj(input::get)
+                        .collect(Collectors.toList()),
+                Arrays.stream(new int[]{0, 2, 4, 6})
+                        .mapToObj(input::get)
+                        .collect(Collectors.toList())
+        );
         assertEquals(expected, book.getAllOffers());
     }
 
@@ -178,7 +185,7 @@ class OrderBookTest {
 
         //expect
         assertEquals(new ExecutionResult(emptyList(), bid(ONE, market())), result);
-        assertEquals(singletonList(bid(ONE, ONE)), book.getAllOffers());
+        assertEquals(sides(singletonList(bid(ONE, ONE)), emptyList()), book.getAllOffers());
     }
 
     @Test
@@ -192,7 +199,7 @@ class OrderBookTest {
 
         //expect
         assertEquals(new ExecutionResult(singletonList(tx(ONE, ONE)), null), result);
-        assertEquals(emptyList(), book.getAllOffers());
+        assertTrue(book.isEmpty());
     }
 
     @Test
@@ -206,7 +213,7 @@ class OrderBookTest {
 
         //expect
         assertEquals(new ExecutionResult(singletonList(tx(ONE, ONE)), bid(ONE, market())), result);
-        assertEquals(emptyList(), book.getAllOffers());
+        assertTrue(book.isEmpty());
     }
 
     @Test
@@ -220,6 +227,6 @@ class OrderBookTest {
 
         //expect
         assertEquals(new ExecutionResult(singletonList(tx(ONE, ONE)), null), result);
-        assertEquals(singletonList(ask(ONE, ONE)), book.getAllOffers());
+        assertEquals(sides(emptyList(), singletonList(ask(ONE, ONE))), book.getAllOffers());
     }
 }

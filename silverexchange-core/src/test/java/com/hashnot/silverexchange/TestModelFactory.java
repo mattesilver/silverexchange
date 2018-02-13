@@ -7,6 +7,9 @@ import com.hashnot.silverexchange.util.Clock;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 public class TestModelFactory {
     private static final Object PAIR = new Object() {
@@ -16,7 +19,7 @@ public class TestModelFactory {
         }
     };
 
-    public static final Instant TS = Instant.ofEpochMilli(0);
+    static final Instant TS = Instant.ofEpochMilli(0);
     private static final Clock CLOCK = () -> TS;
     public static final ITransactionFactory TX_FACTORY = new DefaultTransactionFactory(CLOCK);
 
@@ -50,5 +53,12 @@ public class TestModelFactory {
 
     static OrderBook b() {
         return new OrderBook(TX_FACTORY);
+    }
+
+    static Map<Side, List<Offer>> sides(List<Offer> bids, List<Offer> asks) {
+        Map<Side, List<Offer>> result = new EnumMap<>(Side.class);
+        result.put(Side.Bid, bids);
+        result.put(Side.Ask, asks);
+        return result;
     }
 }

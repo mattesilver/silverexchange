@@ -45,7 +45,7 @@ class ExchangeTest {
         Exchange x = n();
         x.post(ask(ONE, ONE));
         x.post(bid(ONE, ONE));
-        assertTrue(x.getAllOffers().isEmpty());
+        assertTrue(OrderBook.isEmpty(x.getAllOffers()));
 
         assertEquals(singletonList(tx(ONE, ONE)), x.getAllTransactions());
     }

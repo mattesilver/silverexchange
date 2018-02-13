@@ -1,13 +1,13 @@
 package com.hashnot.silverexchange;
 
 import com.hashnot.silverexchange.match.Offer;
+import com.hashnot.silverexchange.match.Side;
 import com.hashnot.silverexchange.match.Transaction;
-import com.hashnot.silverexchange.util.Clock;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class Exchange {
     private OrderBook orderBook;
@@ -33,7 +33,7 @@ public class Exchange {
         return Collections.unmodifiableList(transactions);
     }
 
-    public Collection<Offer> getAllOffers() {
+    public Map<Side, List<Offer>> getAllOffers() {
         return orderBook.getAllOffers();
     }
 }

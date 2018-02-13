@@ -84,22 +84,21 @@ public class OrderBook {
         }
     }
 
-
     /**
      * @return All offers, bids ordered by price in descending order, then asks ordered ascending
      */
-    public Collection<Offer> getAllOffers() {
-        /*
-        Could be made faster by concatenating the lists instead of copying the elements, but avoid premature optimisation
-         */
-        List<Offer> asks = orderBook.get(Side.Ask);
-        List<Offer> bids = orderBook.get(Side.Bid);
-
-        List<Offer> all = new ArrayList<>(asks.size() + bids.size());
-        all.addAll(bids);
-        Collections.reverse(all);
-        all.addAll(asks);
-        return all;
+    public Map<Side, List<Offer>> getAllOffers() {
+        return orderBook;
     }
 
+    /**
+     * @return true if this order book contains no passive offers
+     */
+    public boolean isEmpty() {
+        return isEmpty(orderBook);
+    }
+
+    static boolean isEmpty(Map<Side, List<Offer>> orderBook) {
+        return orderBook.values().stream().allMatch(List::isEmpty);
+    }
 }
