@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    compile ":silverexchange-core"
+    compile project(":silverexchange-core")
     compile 'org.knowm.xchange:xchange-core:4.3.3'
 
     testRuntime 'org.slf4j:slf4j-simple:1.7.25'
