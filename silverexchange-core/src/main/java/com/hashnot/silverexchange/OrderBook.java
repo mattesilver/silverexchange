@@ -4,7 +4,6 @@ import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.match.OfferExecutionResult;
 import com.hashnot.silverexchange.match.Side;
 import com.hashnot.silverexchange.match.Transaction;
-import com.hashnot.silverexchange.util.Clock;
 import com.hashnot.silverexchange.util.Lists;
 
 import java.util.*;
@@ -12,7 +11,7 @@ import java.util.*;
 import static java.util.Collections.emptyList;
 
 public class OrderBook {
-    private final Clock clock;
+    private final ITransactionFactory transactionFactory;
     private final Map<Side, List<Offer>> orderBook = new EnumMap<>(Side.class);
 
     {
@@ -21,8 +20,8 @@ public class OrderBook {
         orderBook.put(Side.Bid, new LinkedList<>());
     }
 
-    OrderBook(Clock clock) {
-        this.clock = clock;
+    OrderBook(ITransactionFactory transactionFactory) {
+        this.transactionFactory = transactionFactory;
     }
 
     public ExecutionResult post(Offer o) {
@@ -49,7 +48,7 @@ public class OrderBook {
         Offer handled = offer;
         do {
             Offer against = otherOffers.get(0);
-            OfferExecutionResult execResult = handled.execute(against, clock);
+            OfferExecutionResult execResult = handled.execute(against, transactionFactory);
             if (execResult.transaction != null)
                 transactions.add(execResult.transaction);
 

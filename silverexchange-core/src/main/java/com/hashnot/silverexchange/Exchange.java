@@ -13,8 +13,8 @@ public class Exchange {
     private OrderBook orderBook;
     private List<Transaction> transactions = new LinkedList<>();
 
-    public Exchange(Clock clock) {
-        orderBook = new OrderBook(clock);
+    public Exchange(ITransactionFactory txFactory) {
+        orderBook = new OrderBook(txFactory);
     }
 
     /**

@@ -30,7 +30,7 @@ class OfferTest {
         Offer offer = ask(ONE, RATE);
 
 
-        OfferExecutionResult result = offer.execute(against, CLOCK);
+        OfferExecutionResult result = offer.execute(against, TX_FACTORY);
 
 
         assertNull(result.againstRemainder);
@@ -47,7 +47,7 @@ class OfferTest {
         Offer offer = ask(THREE, RATE);
 
 
-        OfferExecutionResult result = offer.execute(against, CLOCK);
+        OfferExecutionResult result = offer.execute(against, TX_FACTORY);
 
         assertNull(result.againstRemainder);
 
@@ -65,7 +65,7 @@ class OfferTest {
         Offer offer = ask(TWO, RATE);
 
 
-        OfferExecutionResult result = offer.execute(against, CLOCK);
+        OfferExecutionResult result = offer.execute(against, TX_FACTORY);
 
         assertNull(result.remainder);
 
@@ -82,7 +82,7 @@ class OfferTest {
         Offer offer = ask(TWO, TWO);
 
 
-        OfferExecutionResult result = offer.execute(against, CLOCK);
+        OfferExecutionResult result = offer.execute(against, TX_FACTORY);
 
         assertNull(result.transaction);
 
@@ -161,7 +161,7 @@ class OfferTest {
         Offer existing = ask(ONE, ONE);
         Offer market = bid(ONE, market());
 
-        OfferExecutionResult result = market.execute(existing, CLOCK);
+        OfferExecutionResult result = market.execute(existing, TX_FACTORY);
 
         OfferExecutionResult expected = new OfferExecutionResult(tx(ONE, ONE), null, null);
         assertEquals(expected, result);

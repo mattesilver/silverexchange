@@ -17,7 +17,8 @@ public class TestModelFactory {
     };
 
     public static final Instant TS = Instant.ofEpochMilli(0);
-    public static final Clock CLOCK = () -> TS;
+    private static final Clock CLOCK = () -> TS;
+    public static final ITransactionFactory TX_FACTORY = new DefaultTransactionFactory(CLOCK);
 
     public static Offer ask(BigDecimal amount, BigDecimal rate) {
         return new Offer(PAIR, Side.Ask, amount, new OfferRate(rate));
@@ -36,7 +37,7 @@ public class TestModelFactory {
     }
 
     static Exchange n() {
-        return new Exchange(CLOCK);
+        return new Exchange(TX_FACTORY);
     }
 
     public static Transaction tx(BigDecimal amount, BigDecimal rate) {
@@ -48,6 +49,6 @@ public class TestModelFactory {
     }
 
     static OrderBook b() {
-        return new OrderBook(CLOCK);
+        return new OrderBook(TX_FACTORY);
     }
 }

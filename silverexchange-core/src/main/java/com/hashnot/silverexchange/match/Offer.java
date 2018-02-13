@@ -1,11 +1,11 @@
 package com.hashnot.silverexchange.match;
 
+import com.hashnot.silverexchange.ITransactionFactory;
 import com.hashnot.silverexchange.OfferRate;
+import com.hashnot.silverexchange.TransactionRate;
 import com.hashnot.silverexchange.util.BigDecimals;
-import com.hashnot.silverexchange.util.Clock;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -51,10 +51,10 @@ public class Offer {
     }
 
     /**
-     * @param against an offer from the order book, against which <code>this</code> order is executed
-     * @param clock Clock used to generate transaction timestamp
+     * @param against   An offer from the order book, against which <code>this</code> order is executed
+     * @param txFactory Transaction factory object used to create Transaction objects
      */
-    public OfferExecutionResult execute(Offer against, Clock clock) {
+    public OfferExecutionResult execute(Offer against, ITransactionFactory txFactory) {
         assert pair.equals(against.pair) : "Not executing against offer of the same pair";
         assert side != against.side : "Not executing against offer of opposite side";
 
@@ -63,30 +63,29 @@ public class Offer {
             return new OfferExecutionResult(null, this, against);
         }
 
-        Instant timestamp = clock.get();
         BigDecimal amountDiff = amount.subtract(against.amount);
         int amountDiffSig = amountDiff.signum();
-        if (amountDiffSig == 0)
-            // 1-to-1 match
-            return new OfferExecutionResult(new Transaction(amount, against.rate, timestamp), null, null);
 
         // here we have to null either of remainders in the result
         Offer remainder,
                 againstRemainder;
         Transaction tx;
 
-
-        // if this.amount > against.amount, null againstRemainder and tx.amount comes from against
-        if (amountDiffSig > 0) {
+        if (amountDiffSig == 0) {
+            // 1-to-1 match
+            tx = txFactory.apply(amount, TransactionRate.from(against.rate));
+            remainder = againstRemainder = null;
+        } else if (amountDiffSig > 0) {
+            // if this.amount > against.amount, null againstRemainder and tx.amount comes from against
             remainder = new Offer(against.pair, side, amountDiff, rate);
             againstRemainder = null;
-            tx = new Transaction(against.amount, against.rate, timestamp);
+            tx = txFactory.apply(against.amount, TransactionRate.from(against.rate));
 
             // otherwise, i.e. this.amount < against.amount, null remainder and tx.amount comes from this
         } else {
             remainder = null;
             againstRemainder = new Offer(pair, against.side, amountDiff.negate(), against.rate);
-            tx = new Transaction(amount, against.rate, timestamp);
+            tx = txFactory.apply(amount, TransactionRate.from(against.rate));
         }
 
         return new OfferExecutionResult(tx, remainder, againstRemainder);
