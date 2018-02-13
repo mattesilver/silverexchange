@@ -2,5 +2,6 @@ language: java
 
 jdk:
   - oraclejdk8
-  - oraclejdk9
-  - openjdk7
+# Gradle doesn't like jdk9
+#  - oraclejdk9
+  - openjdk8
