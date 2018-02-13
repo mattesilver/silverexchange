@@ -38,37 +38,37 @@ public class OrderBook {
         }
     }
 
-    private ExecutionResult execute(Offer offer, List<Offer> otherOffers) {
-        assert !otherOffers.isEmpty();
-        assert otherOffers.get(0).getSide() != offer.getSide();
-        assert otherOffers.get(0).getPair().equals(offer.getPair());
+    private ExecutionResult execute(Offer active, List<Offer> passiveOffers) {
+        assert !passiveOffers.isEmpty();
+        assert passiveOffers.get(0).getSide() != active.getSide();
+        assert passiveOffers.get(0).getPair().equals(active.getPair());
 
         List<Transaction> transactions = new LinkedList<>();
 
-        Offer handled = offer;
+        Offer currentActive = active;
         do {
-            Offer against = otherOffers.get(0);
-            OfferExecutionResult execResult = handled.execute(against, transactionFactory);
+            Offer passive = passiveOffers.get(0);
+            OfferExecutionResult execResult = currentActive.execute(passive, transactionFactory);
             if (execResult.transaction != null)
                 transactions.add(execResult.transaction);
 
-            handled = execResult.remainder;
+            currentActive = execResult.remainder;
 
-            if (execResult.againstRemainder != null) {
-                otherOffers.set(0, execResult.againstRemainder);
+            if (execResult.passiveRemainder != null) {
+                passiveOffers.set(0, execResult.passiveRemainder);
                 break;
             } else {
-                otherOffers.remove(0);
+                passiveOffers.remove(0);
             }
 
-        } while (!otherOffers.isEmpty() && handled != null);
+        } while (!passiveOffers.isEmpty() && currentActive != null);
 
-        if (handled != null && !handled.isMarketOrder()) {
-            insert(handled);
-            handled = null;
+        if (currentActive != null && !currentActive.isMarketOrder()) {
+            insert(currentActive);
+            currentActive = null;
         }
 
-        return new ExecutionResult(transactions, handled);
+        return new ExecutionResult(transactions, currentActive);
     }
 
     private void insert(Offer o) {

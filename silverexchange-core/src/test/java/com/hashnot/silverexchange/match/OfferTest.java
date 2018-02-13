@@ -26,14 +26,14 @@ class OfferTest {
     @Test
     void executeExactlyMatchingOffers() {
         final BigDecimal RATE = TWO;
-        Offer against = bid(ONE, RATE);
-        Offer offer = ask(ONE, RATE);
+        Offer passive = bid(ONE, RATE);
+        Offer active = ask(ONE, RATE);
 
 
-        OfferExecutionResult result = offer.execute(against, TX_FACTORY);
+        OfferExecutionResult result = active.execute(passive, TX_FACTORY);
 
 
-        assertNull(result.againstRemainder);
+        assertNull(result.passiveRemainder);
         assertNull(result.remainder);
 
         Transaction expectedTx = tx(ONE, RATE);
@@ -43,15 +43,15 @@ class OfferTest {
     @Test
     void testExecutePartialMatchWithRemainder() {
         final BigDecimal RATE = TWO;
-        Offer against = bid(ONE, RATE);
-        Offer offer = ask(THREE, RATE);
+        Offer passive = bid(ONE, RATE);
+        Offer active = ask(THREE, RATE);
 
 
-        OfferExecutionResult result = offer.execute(against, TX_FACTORY);
+        OfferExecutionResult result = active.execute(passive, TX_FACTORY);
 
-        assertNull(result.againstRemainder);
+        assertNull(result.passiveRemainder);
 
-        Offer expectedRemainder = ask(TWO, offer.getRate());
+        Offer expectedRemainder = ask(TWO, active.getRate());
         assertEquals(expectedRemainder, result.remainder);
 
         Transaction expectedTx = tx(ONE, RATE);
@@ -61,16 +61,16 @@ class OfferTest {
     @Test
     void testExecutePartialMatchWithAgainstRemainder() {
         final BigDecimal RATE = TWO;
-        Offer against = bid(THREE, RATE);
-        Offer offer = ask(TWO, RATE);
+        Offer passive = bid(THREE, RATE);
+        Offer active = ask(TWO, RATE);
 
 
-        OfferExecutionResult result = offer.execute(against, TX_FACTORY);
+        OfferExecutionResult result = active.execute(passive, TX_FACTORY);
 
         assertNull(result.remainder);
 
-        Offer expectedAgainstRemainder = bid(ONE, against.getRate());
-        assertEquals(expectedAgainstRemainder, result.againstRemainder);
+        Offer expectedAgainstRemainder = bid(ONE, passive.getRate());
+        assertEquals(expectedAgainstRemainder, result.passiveRemainder);
 
         Transaction expectedTx = tx(TWO, RATE);
         assertEquals(expectedTx, result.transaction);
@@ -78,25 +78,25 @@ class OfferTest {
 
     @Test
     void testExecuteNoMatch() {
-        Offer against = bid(THREE, ONE);
-        Offer offer = ask(TWO, TWO);
+        Offer passive = bid(THREE, ONE);
+        Offer active = ask(TWO, TWO);
 
 
-        OfferExecutionResult result = offer.execute(against, TX_FACTORY);
+        OfferExecutionResult result = active.execute(passive, TX_FACTORY);
 
         assertNull(result.transaction);
 
-        assertEquals(against, result.againstRemainder);
+        assertEquals(passive, result.passiveRemainder);
 
-        assertEquals(offer, result.remainder);
+        assertEquals(active, result.remainder);
     }
 
     @Test
     void testEqualRateMatch() {
         final BigDecimal ANY = TWO;
-        Offer against = bid(ANY, ONE);
-        Offer offer = ask(ANY, ONE);
-        assertTrue(offer.rateMatch(against));
+        Offer passive = bid(ANY, ONE);
+        Offer active = ask(ANY, ONE);
+        assertTrue(active.rateMatch(passive));
     }
 
     /**
@@ -105,9 +105,9 @@ class OfferTest {
     @Test
     void testGreaterRateMatch() {
         final BigDecimal ANY = TWO;
-        Offer against = bid(ANY, TWO);
-        Offer offer = ask(ANY, ONE);
-        assertTrue(offer.rateMatch(against));
+        Offer passive = bid(ANY, TWO);
+        Offer active = ask(ANY, ONE);
+        assertTrue(active.rateMatch(passive));
     }
 
     /**
@@ -116,9 +116,9 @@ class OfferTest {
     @Test
     void testSmallerRateNoMatch() {
         final BigDecimal ANY = TWO;
-        Offer against = bid(ANY, ONE);
-        Offer offer = ask(ANY, TWO);
-        assertFalse(offer.rateMatch(against));
+        Offer passive = bid(ANY, ONE);
+        Offer active = ask(ANY, TWO);
+        assertFalse(active.rateMatch(passive));
     }
 
     @Test
@@ -158,10 +158,10 @@ class OfferTest {
 
     @Test
     void testMarketOrderAgainstMatchingOffer() {
-        Offer existing = ask(ONE, ONE);
-        Offer market = bid(ONE, market());
+        Offer passive = ask(ONE, ONE);
+        Offer active = bid(ONE, market());
 
-        OfferExecutionResult result = market.execute(existing, TX_FACTORY);
+        OfferExecutionResult result = active.execute(passive, TX_FACTORY);
 
         OfferExecutionResult expected = new OfferExecutionResult(tx(ONE, ONE), null, null);
         assertEquals(expected, result);

@@ -20,12 +20,12 @@ public class OfferExecutionResult {
     /**
      * A remainder of the {@link Offer} from order book. if the offer was full matched, it's null and the offer should be removed from the order book. Otherwise it should replace the first offer in the order book.
      */
-    public final Offer againstRemainder;
+    public final Offer passiveRemainder;
 
-    OfferExecutionResult(Transaction transaction, Offer remainder, Offer againstRemainder) {
+    OfferExecutionResult(Transaction transaction, Offer remainder, Offer passiveRemainder) {
         this.transaction = transaction;
         this.remainder = remainder;
-        this.againstRemainder = againstRemainder;
+        this.passiveRemainder = passiveRemainder;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class OfferExecutionResult {
         return
                 "transaction=" + transaction
                         + ", remainder=" + remainder
-                        + ", againstRemainder=" + againstRemainder
+                        + ", passiveRemainder=" + passiveRemainder
                 ;
     }
 
@@ -46,7 +46,7 @@ public class OfferExecutionResult {
         return
                 Objects.equals(transaction, r.transaction)
                         && Objects.equals(remainder, r.remainder)
-                        && Objects.equals(againstRemainder, r.againstRemainder)
+                        && Objects.equals(passiveRemainder, r.passiveRemainder)
                 ;
     }
 
@@ -55,7 +55,7 @@ public class OfferExecutionResult {
         return Objects.hash(
                 transaction,
                 remainder,
-                againstRemainder
+                passiveRemainder
         );
     }
 }

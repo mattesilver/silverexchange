@@ -51,49 +51,50 @@ public class Offer {
     }
 
     /**
-     * @param against   An offer from the order book, against which <code>this</code> order is executed
+     * @param passive   An offer from the order book (hence the name passive, it's waiting in the order book), against
+     *                  which <code>this</code> order (active) is executed
      * @param txFactory Transaction factory object used to create Transaction objects
      */
-    public OfferExecutionResult execute(Offer against, ITransactionFactory txFactory) {
-        assert pair.equals(against.pair) : "Not executing against offer of the same pair";
-        assert side != against.side : "Not executing against offer of opposite side";
+    public OfferExecutionResult execute(Offer passive, ITransactionFactory txFactory) {
+        assert pair.equals(passive.pair) : "Not executing against offer of the same pair";
+        assert side != passive.side : "Not executing against offer of opposite side";
 
-        if (!rateMatch(against)) {
+        if (!rateMatch(passive)) {
             // no execution due to no price match
-            return new OfferExecutionResult(null, this, against);
+            return new OfferExecutionResult(null, this, passive);
         }
 
-        BigDecimal amountDiff = amount.subtract(against.amount);
+        BigDecimal amountDiff = amount.subtract(passive.amount);
         int amountDiffSig = amountDiff.signum();
 
         // here we have to null either of remainders in the result
         Offer remainder,
-                againstRemainder;
+                passiveRemainder;
         Transaction tx;
 
         if (amountDiffSig == 0) {
             // 1-to-1 match
-            tx = txFactory.apply(amount, TransactionRate.from(against.rate));
-            remainder = againstRemainder = null;
+            tx = txFactory.apply(amount, TransactionRate.from(passive.rate));
+            remainder = passiveRemainder = null;
         } else if (amountDiffSig > 0) {
-            // if this.amount > against.amount, null againstRemainder and tx.amount comes from against
-            remainder = new Offer(against.pair, side, amountDiff, rate);
-            againstRemainder = null;
-            tx = txFactory.apply(against.amount, TransactionRate.from(against.rate));
+            // if this.amount > against.amount, null passiveRemainder and tx.amount comes from against
+            remainder = new Offer(passive.pair, side, amountDiff, rate);
+            passiveRemainder = null;
+            tx = txFactory.apply(passive.amount, TransactionRate.from(passive.rate));
 
             // otherwise, i.e. this.amount < against.amount, null remainder and tx.amount comes from this
         } else {
             remainder = null;
-            againstRemainder = new Offer(pair, against.side, amountDiff.negate(), against.rate);
-            tx = txFactory.apply(amount, TransactionRate.from(against.rate));
+            passiveRemainder = new Offer(pair, passive.side, amountDiff.negate(), passive.rate);
+            tx = txFactory.apply(amount, TransactionRate.from(passive.rate));
         }
 
-        return new OfferExecutionResult(tx, remainder, againstRemainder);
+        return new OfferExecutionResult(tx, remainder, passiveRemainder);
     }
 
-    boolean rateMatch(Offer against) {
-        assert side != against.side;
-        return rate.compareTo(against.rate) * side.orderSignum <= 0;
+    boolean rateMatch(Offer passive) {
+        assert side != passive.side;
+        return rate.compareTo(passive.rate) * side.orderSignum <= 0;
     }
 
     public boolean isMarketOrder() {
