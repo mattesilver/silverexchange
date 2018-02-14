@@ -4,3 +4,16 @@ jdk:
   - oraclejdk8
 # Gradle doesn't like jdk9
 #  - oraclejdk9
+
+#Codeclimate
+env:
+  global:
+    - CC_TEST_REPORTER_ID=58be6b274885f947b012587711ab1e96c782f1b23603dfa053733e6360aee0eb
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+script:
+  - bundle exec rspec
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
