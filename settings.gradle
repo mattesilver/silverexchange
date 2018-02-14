@@ -10,3 +10,4 @@
 rootProject.name = 'silverexchange'
 include 'silverexchange-core'
 include 'silverexchange-xchange'
+include 'silverexchange-test'
