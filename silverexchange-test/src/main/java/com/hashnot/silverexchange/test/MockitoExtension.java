@@ -8,7 +8,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package com.hashnot.silverexchange.util;
+package com.hashnot.silverexchange.test;
 
 import static org.mockito.Mockito.mock;
 

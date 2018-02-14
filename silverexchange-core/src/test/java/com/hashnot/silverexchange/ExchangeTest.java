@@ -1,7 +1,7 @@
 package com.hashnot.silverexchange;
 
 import com.hashnot.silverexchange.match.Transaction;
-import com.hashnot.silverexchange.util.MockitoExtension;
+import com.hashnot.silverexchange.test.MockitoExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
