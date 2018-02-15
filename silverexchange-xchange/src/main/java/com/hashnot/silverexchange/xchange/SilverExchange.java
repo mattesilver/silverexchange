@@ -20,10 +20,12 @@ public class SilverExchange extends BaseExchange {
 
     @Override
     protected void initServices() {
-        Exchange exchange = new Exchange(new DefaultTransactionFactory(Clock.systemDefaultZone()));
+        Clock clock = Clock.systemDefaultZone();
+        Exchange exchange = new Exchange(new DefaultTransactionFactory(clock));
         IIdGenerator idGenerator = new DefaultIdGenerator();
+
         this.accountService = new SilverAccountService();
-        this.marketDataService = new SilverMarketDataService(exchange);
+        this.marketDataService = new SilverMarketDataService(exchange, clock);
         this.tradeService = new SilverTradeService(exchange, idGenerator);
     }
 

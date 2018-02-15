@@ -1,6 +1,7 @@
 package com.hashnot.silverexchange.xchange.service.marketdata;
 
 import com.hashnot.silverexchange.Exchange;
+import com.hashnot.silverexchange.util.Clock;
 import com.hashnot.silverexchange.xchange.model.TransactionConverter;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.OrderBook;
@@ -15,14 +16,16 @@ import java.util.stream.Collectors;
 
 public class SilverMarketDataService implements MarketDataService {
     final private Exchange exchange;
+    final private Clock clock;
 
-    public SilverMarketDataService(Exchange exchange) {
+    public SilverMarketDataService(Exchange exchange, Clock clock) {
         this.exchange = exchange;
+        this.clock = clock;
     }
 
     @Override
     public Ticker getTicker(CurrencyPair currencyPair, Object... args) {
-        throw new NotYetImplementedForExchangeException();
+        return TickerConverter.toTicker(exchange.getAllOffers(), clock);
     }
 
     @Override

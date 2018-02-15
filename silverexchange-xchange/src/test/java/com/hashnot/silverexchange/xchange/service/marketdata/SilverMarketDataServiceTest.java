@@ -10,6 +10,7 @@ import org.mockito.Mock;
 
 import java.io.IOException;
 
+import static com.hashnot.silverexchange.xchange.model.TestModelFactory.CLOCK;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -28,6 +29,6 @@ class SilverMarketDataServiceTest {
     }
 
     private static MarketDataService service(Exchange exchange) {
-        return new SilverMarketDataService(exchange);
+        return new SilverMarketDataService(exchange, CLOCK);
     }
 }
