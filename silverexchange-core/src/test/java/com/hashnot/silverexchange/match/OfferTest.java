@@ -10,7 +10,6 @@ import static com.hashnot.silverexchange.util.BigDecimalsTest.*;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO rename variable RATE to lower-case
 class OfferTest {
 
     @Test
@@ -25,9 +24,9 @@ class OfferTest {
 
     @Test
     void executeExactlyMatchingOffers() {
-        final BigDecimal RATE = TWO;
-        Offer passive = bid(ONE, RATE);
-        Offer active = ask(ONE, RATE);
+        final BigDecimal rate = TWO;
+        Offer passive = bid(ONE, rate);
+        Offer active = ask(ONE, rate);
 
 
         OfferExecutionResult result = active.execute(passive, TX_FACTORY);
@@ -36,15 +35,15 @@ class OfferTest {
         assertNull(result.passiveRemainder);
         assertNull(result.remainder);
 
-        Transaction expectedTx = tx(ONE, RATE);
+        Transaction expectedTx = tx(ONE, rate);
         assertEquals(expectedTx, result.transaction);
     }
 
     @Test
     void testExecutePartialMatchWithRemainder() {
-        final BigDecimal RATE = TWO;
-        Offer passive = bid(ONE, RATE);
-        Offer active = ask(THREE, RATE);
+        final BigDecimal rate = TWO;
+        Offer passive = bid(ONE, rate);
+        Offer active = ask(THREE, rate);
 
 
         OfferExecutionResult result = active.execute(passive, TX_FACTORY);
@@ -54,15 +53,15 @@ class OfferTest {
         Offer expectedRemainder = ask(TWO, active.getRate());
         assertEquals(expectedRemainder, result.remainder);
 
-        Transaction expectedTx = tx(ONE, RATE);
+        Transaction expectedTx = tx(ONE, rate);
         assertEquals(expectedTx, result.transaction);
     }
 
     @Test
     void testExecutePartialMatchWithAgainstRemainder() {
-        final BigDecimal RATE = TWO;
-        Offer passive = bid(THREE, RATE);
-        Offer active = ask(TWO, RATE);
+        final BigDecimal rate = TWO;
+        Offer passive = bid(THREE, rate);
+        Offer active = ask(TWO, rate);
 
 
         OfferExecutionResult result = active.execute(passive, TX_FACTORY);
@@ -72,7 +71,7 @@ class OfferTest {
         Offer expectedAgainstRemainder = bid(ONE, passive.getRate());
         assertEquals(expectedAgainstRemainder, result.passiveRemainder);
 
-        Transaction expectedTx = tx(TWO, RATE);
+        Transaction expectedTx = tx(TWO, rate);
         assertEquals(expectedTx, result.transaction);
     }
 
@@ -93,9 +92,9 @@ class OfferTest {
 
     @Test
     void testEqualRateMatch() {
-        final BigDecimal ANY = TWO;
-        Offer passive = bid(ANY, ONE);
-        Offer active = ask(ANY, ONE);
+        final BigDecimal rate = TWO;
+        Offer passive = bid(rate, ONE);
+        Offer active = ask(rate, ONE);
         assertTrue(active.rateMatch(passive));
     }
 
@@ -104,9 +103,9 @@ class OfferTest {
      */
     @Test
     void testGreaterRateMatch() {
-        final BigDecimal ANY = TWO;
-        Offer passive = bid(ANY, TWO);
-        Offer active = ask(ANY, ONE);
+        final BigDecimal rate = TWO;
+        Offer passive = bid(rate, TWO);
+        Offer active = ask(rate, ONE);
         assertTrue(active.rateMatch(passive));
     }
 
@@ -115,9 +114,9 @@ class OfferTest {
      */
     @Test
     void testSmallerRateNoMatch() {
-        final BigDecimal ANY = TWO;
-        Offer passive = bid(ANY, ONE);
-        Offer active = ask(ANY, TWO);
+        final BigDecimal rate = TWO;
+        Offer passive = bid(rate, ONE);
+        Offer active = ask(rate, TWO);
         assertFalse(active.rateMatch(passive));
     }
 
