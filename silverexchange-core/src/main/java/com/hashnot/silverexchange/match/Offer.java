@@ -46,6 +46,10 @@ public class Offer {
         return side;
     }
 
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
     public OfferRate getRate() {
         return rate;
     }

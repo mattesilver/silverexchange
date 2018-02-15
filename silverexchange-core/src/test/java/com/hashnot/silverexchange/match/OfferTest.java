@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.hashnot.silverexchange.OfferRate.market;
 import static com.hashnot.silverexchange.TestModelFactory.*;
 import static com.hashnot.silverexchange.util.BigDecimalsTest.*;
 import static java.util.Arrays.asList;

@@ -52,4 +52,16 @@ public class Transaction {
     public int hashCode() {
         return Objects.hash(amount, rate, timestamp);
     }
+
+    public TransactionRate getRate() {
+        return rate;
+    }
+
+    public Instant getTimestamp() {
+        return timestamp;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
 }

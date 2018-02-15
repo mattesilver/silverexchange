@@ -47,10 +47,6 @@ public class TestModelFactory {
         return new Transaction(amount, new TransactionRate(rate), TS);
     }
 
-    public static OfferRate market() {
-        return new OfferRate(null);
-    }
-
     static OrderBook b() {
         return new OrderBook(TX_FACTORY);
     }

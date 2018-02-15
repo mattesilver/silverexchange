@@ -1,5 +1,10 @@
 package com.hashnot.silverexchange.xchange;
 
+import com.hashnot.silverexchange.DefaultTransactionFactory;
+import com.hashnot.silverexchange.Exchange;
+import com.hashnot.silverexchange.util.Clock;
+import com.hashnot.silverexchange.xchange.service.DefaultIdGenerator;
+import com.hashnot.silverexchange.xchange.service.IIdGenerator;
 import com.hashnot.silverexchange.xchange.service.account.SilverAccountService;
 import com.hashnot.silverexchange.xchange.service.marketdata.SilverMarketDataService;
 import com.hashnot.silverexchange.xchange.service.trade.SilverTradeService;
@@ -15,9 +20,11 @@ public class SilverExchange extends BaseExchange {
 
     @Override
     protected void initServices() {
+        Exchange exchange = new Exchange(new DefaultTransactionFactory(Clock.systemDefaultZone()));
+        IIdGenerator idGenerator = new DefaultIdGenerator();
         this.accountService = new SilverAccountService();
-        this.marketDataService = new SilverMarketDataService();
-        this.tradeService = new SilverTradeService();
+        this.marketDataService = new SilverMarketDataService(exchange);
+        this.tradeService = new SilverTradeService(exchange, idGenerator);
     }
 
     @Override

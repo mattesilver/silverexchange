@@ -2,7 +2,7 @@ package com.hashnot.silverexchange;
 
 import org.junit.jupiter.api.Test;
 
-import static com.hashnot.silverexchange.TestModelFactory.market;
+import static com.hashnot.silverexchange.OfferRate.market;
 import static com.hashnot.silverexchange.util.BigDecimalsTest.ONE;
 import static com.hashnot.silverexchange.util.BigDecimalsTest.TWO;
 import static org.junit.jupiter.api.Assertions.*;

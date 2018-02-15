@@ -13,6 +13,10 @@ public abstract class AbstractRate {
         this.value = value;
     }
 
+    public BigDecimal getValue() {
+        return value;
+    }
+
     @Override
     abstract public boolean equals(Object obj);
 
