@@ -42,7 +42,6 @@ public class OrderBook {
     private ExecutionResult execute(Offer active, List<Offer> passiveOffers) {
         assert !passiveOffers.isEmpty();
         assert passiveOffers.get(0).getSide() != active.getSide();
-        assert passiveOffers.get(0).getPair().equals(active.getPair());
 
         List<Transaction> transactions = new LinkedList<>();
 

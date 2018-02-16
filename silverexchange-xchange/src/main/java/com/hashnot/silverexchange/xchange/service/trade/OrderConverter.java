@@ -35,7 +35,7 @@ public class OrderConverter {
         SilverOrder order = (SilverOrder) offer;
 
         OrderType orderType = fromSide(offer.getSide());
-        CurrencyPair pair = (CurrencyPair) offer.getPair();
+        CurrencyPair pair = order.getPair();
 
         return
                 new LimitOrder.Builder(orderType, pair)
