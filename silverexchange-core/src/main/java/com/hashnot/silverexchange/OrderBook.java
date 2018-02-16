@@ -49,8 +49,9 @@ public class OrderBook {
         do {
             Offer passive = passiveOffers.get(0);
             OfferExecutionResult execResult = currentActive.execute(passive, transactionFactory);
-            if (execResult.transaction != null)
-                transactions.add(execResult.transaction);
+
+            Optional.ofNullable(execResult.transaction)
+                    .ifPresent(transactions::add);
 
             currentActive = execResult.remainder;
 

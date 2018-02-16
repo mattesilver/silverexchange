@@ -1,5 +1,6 @@
 package com.hashnot.silverexchange.xchange.service.trade;
 
+import com.google.common.collect.Iterables;
 import com.hashnot.silverexchange.Exchange;
 import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.xchange.model.SilverOrder;
@@ -87,22 +88,29 @@ public class SilverTradeService implements TradeService {
 
     @Override
     public boolean cancelOrder(CancelOrderParams orderParams) {
+        return cancelOrder(getIdFromParam(orderParams));
+    }
+
+    private static UUID getIdFromParam(CancelOrderParams orderParams) {
         UUID id;
         try {
-            CancelOrderByIdParams byIdParams = (CancelOrderByIdParams) orderParams;
-            id = UUID.fromString(byIdParams.getOrderId());
+            id = UUID.fromString(((CancelOrderByIdParams) orderParams).getOrderId());
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new ExchangeException(e);
         }
+        return id;
+    }
 
-        for (List<Offer> offers : exchange.getAllOffers().values()) {
-            for (Iterator<Offer> iterator = offers.iterator(); iterator.hasNext(); ) {
-                Offer offer = iterator.next();
-                SilverOrder order = (SilverOrder) offer;
-                if (order.getId().equals(id)) {
-                    iterator.remove();
-                    return true;
-                }
+    private boolean cancelOrder(UUID id) {
+        Iterator<Offer> i = Iterables.concat(exchange.getAllOffers().values()).iterator();
+        while (i.hasNext()) {
+            Offer offer = i.next();
+            SilverOrder order = (SilverOrder) offer;
+            if (order.getId().equals(id)) {
+                i.remove();
+                return true;
             }
         }
         return false;
