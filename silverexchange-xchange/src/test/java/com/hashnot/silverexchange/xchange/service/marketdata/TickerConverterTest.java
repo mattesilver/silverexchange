@@ -12,8 +12,6 @@ import java.sql.Date;
 import java.time.Instant;
 import java.util.List;
 
-import static com.hashnot.silverexchange.TestModelFactory.ask;
-import static com.hashnot.silverexchange.TestModelFactory.sides;
 import static com.hashnot.silverexchange.xchange.model.TestModelFactory.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
