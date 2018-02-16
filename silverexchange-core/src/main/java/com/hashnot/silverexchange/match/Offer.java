@@ -6,40 +6,30 @@ import com.hashnot.silverexchange.ext.ITransactionFactory;
 import com.hashnot.silverexchange.util.BigDecimals;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.Objects;
 
 /**
  * Private API
  */
 public class Offer {
-    public static final Comparator<Offer> COMPARATOR_BY_RATE = Offer::compareByRate;
-
-    private Object pair;
     private Side side;
     private BigDecimal amount;
     private OfferRate rate;
 
-    public Offer(Object pair, Side side, BigDecimal amount, OfferRate rate) {
-        assert pair != null;
+    public Offer(Side side, BigDecimal amount, OfferRate rate) {
         assert side != null;
         assert amount != null;
 
         if (!BigDecimals.gtz(amount))
             throw new IllegalArgumentException("Non-positive amount");
 
-        this.pair = pair;
         this.side = side;
         this.amount = amount;
         this.rate = rate;
     }
 
-    private static int compareByRate(Offer a, Offer b) {
+    public static int compareByRate(Offer a, Offer b) {
         return a.getRate().compareTo(b.getRate()) * a.getSide().orderSignum;
-    }
-
-    public Object getPair() {
-        return pair;
     }
 
     public Side getSide() {
@@ -60,7 +50,6 @@ public class Offer {
      * @param txFactory Transaction factory object used to create Transaction objects
      */
     public OfferExecutionResult execute(Offer passive, ITransactionFactory txFactory) {
-        assert pair.equals(passive.pair) : "Not executing against offer of the same pair";
         assert side != passive.side : "Not executing against offer of opposite side";
 
         if (!rateMatch(passive)) {
@@ -82,14 +71,14 @@ public class Offer {
             remainder = passiveRemainder = null;
         } else if (amountDiffSig > 0) {
             // if this.amount > against.amount, null passiveRemainder and tx.amount comes from against
-            remainder = new Offer(passive.pair, side, amountDiff, rate);
+            remainder = new Offer(side, amountDiff, rate);
             passiveRemainder = null;
             tx = txFactory.apply(passive.amount, TransactionRate.from(passive.rate));
 
             // otherwise, i.e. this.amount < against.amount, null remainder and tx.amount comes from this
         } else {
             remainder = null;
-            passiveRemainder = new Offer(pair, passive.side, amountDiff.negate(), passive.rate);
+            passiveRemainder = new Offer(passive.side, amountDiff.negate(), passive.rate);
             tx = txFactory.apply(amount, TransactionRate.from(passive.rate));
         }
 
@@ -109,14 +98,17 @@ public class Offer {
     public String toString() {
         return side
                 + " " + amount
-                + " " + pair
                 + "@" + rate
                 ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(pair, side, amount, rate);
+        return Objects.hash(
+                side,
+                amount,
+                rate
+        );
     }
 
     @Override
@@ -128,8 +120,7 @@ public class Offer {
 
     private boolean equals(Offer o) {
         return
-                pair.equals(o.pair)
-                        && side == o.side
+                side == o.side
                         && amount.equals(o.amount)
                         && rate.equals(o.rate)
                 ;

@@ -42,7 +42,6 @@ public class OrderBook {
     private ExecutionResult execute(Offer active, List<Offer> passiveOffers) {
         assert !passiveOffers.isEmpty();
         assert passiveOffers.get(0).getSide() != active.getSide();
-        assert passiveOffers.get(0).getPair().equals(active.getPair());
 
         List<Transaction> transactions = new LinkedList<>();
 
@@ -74,7 +73,7 @@ public class OrderBook {
 
     private void insert(Offer o) {
         List<Offer> offers = orderBook.get(o.getSide());
-        int index = Collections.binarySearch(offers, o, Offer.COMPARATOR_BY_RATE);
+        int index = Collections.binarySearch(offers, o, Offer::compareByRate);
         if (index < 0)
             offers.add(-index - 1, o);
         else {

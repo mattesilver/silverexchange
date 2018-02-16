@@ -11,29 +11,22 @@ import java.util.List;
 import java.util.Map;
 
 public class TestModelFactory {
-    private static final Object PAIR = new Object() {
-        @Override
-        public String toString() {
-            return "[pair]";
-        }
-    };
-
     public static final ITransactionFactory TX_FACTORY = Transaction::new;
 
     public static Offer ask(BigDecimal amount, BigDecimal rate) {
-        return new Offer(PAIR, Side.Ask, amount, new OfferRate(rate));
+        return new Offer(Side.Ask, amount, new OfferRate(rate));
     }
 
     public static Offer ask(BigDecimal amount, OfferRate rate) {
-        return new Offer(PAIR, Side.Ask, amount, rate);
+        return new Offer(Side.Ask, amount, rate);
     }
 
     public static Offer bid(BigDecimal amount, BigDecimal rate) {
-        return new Offer(PAIR, Side.Bid, amount, new OfferRate(rate));
+        return new Offer(Side.Bid, amount, new OfferRate(rate));
     }
 
     public static Offer bid(BigDecimal amount, OfferRate rate) {
-        return new Offer(PAIR, Side.Bid, amount, rate);
+        return new Offer(Side.Bid, amount, rate);
     }
 
     static Exchange n() {
@@ -48,7 +41,7 @@ public class TestModelFactory {
         return new OrderBook(TX_FACTORY);
     }
 
-    public static Map<Side, List<Offer>> sides(List<Offer> bids, List<Offer> asks) {
+    static Map<Side, List<Offer>> sides(List<Offer> bids, List<Offer> asks) {
         Map<Side, List<Offer>> result = new EnumMap<>(Side.class);
         result.put(Side.Bid, bids);
         result.put(Side.Ask, asks);

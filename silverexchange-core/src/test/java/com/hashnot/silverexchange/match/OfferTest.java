@@ -125,11 +125,11 @@ class OfferTest {
     void testRateComparatorTwoBidsDescending() {
         Offer o1 = bid(ONE, ONE);
         Offer o2 = bid(ONE, TWO);
-        int compare = Offer.COMPARATOR_BY_RATE.compare(o1, o2);
+        int compare = Offer.compareByRate(o1, o2);
         assertTrue(compare > 0);
 
         List<Offer> offers = asList(o1, o2);
-        offers.sort(Offer.COMPARATOR_BY_RATE);
+        offers.sort(Offer::compareByRate);
 
         List<Offer> expected = asList(o2, o1);
         assertEquals(expected, offers);
@@ -139,11 +139,11 @@ class OfferTest {
     void testRateComparatorTwoAsksAscending() {
         Offer o1 = ask(ONE, ONE);
         Offer o2 = ask(ONE, TWO);
-        int compare = Offer.COMPARATOR_BY_RATE.compare(o1, o2);
+        int compare = Offer.compareByRate(o1, o2);
         assertTrue(compare < 0);
 
         List<Offer> offers = asList(o1, o2);
-        offers.sort(Offer.COMPARATOR_BY_RATE);
+        offers.sort(Offer::compareByRate);
 
         List<Offer> expected = asList(o1, o2);
         assertEquals(expected, offers);
