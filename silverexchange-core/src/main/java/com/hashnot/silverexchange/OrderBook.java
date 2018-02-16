@@ -74,7 +74,7 @@ public class OrderBook {
 
     private void insert(Offer o) {
         List<Offer> offers = orderBook.get(o.getSide());
-        int index = Collections.binarySearch(offers, o, Offer.COMPARATOR_BY_RATE);
+        int index = Collections.binarySearch(offers, o, Offer::compareByRate);
         if (index < 0)
             offers.add(-index - 1, o);
         else {

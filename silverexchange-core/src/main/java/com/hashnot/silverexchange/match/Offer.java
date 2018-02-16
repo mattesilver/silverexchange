@@ -6,15 +6,12 @@ import com.hashnot.silverexchange.ext.ITransactionFactory;
 import com.hashnot.silverexchange.util.BigDecimals;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.Objects;
 
 /**
  * Private API
  */
 public class Offer {
-    public static final Comparator<Offer> COMPARATOR_BY_RATE = Offer::compareByRate;
-
     private Object pair;
     private Side side;
     private BigDecimal amount;
@@ -34,7 +31,7 @@ public class Offer {
         this.rate = rate;
     }
 
-    private static int compareByRate(Offer a, Offer b) {
+    public static int compareByRate(Offer a, Offer b) {
         return a.getRate().compareTo(b.getRate()) * a.getSide().orderSignum;
     }
 
