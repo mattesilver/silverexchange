@@ -1,8 +1,8 @@
 package com.hashnot.silverexchange.xchange.service.trade;
 
 import com.google.common.collect.Lists;
-import com.hashnot.silverexchange.DefaultTransactionFactory;
 import com.hashnot.silverexchange.Exchange;
+import com.hashnot.silverexchange.TestTransactionFactory;
 import com.hashnot.silverexchange.test.MockitoExtension;
 import com.hashnot.silverexchange.xchange.model.TestModelFactory;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class SilverTradeServiceTest {
     private Exchange exchange;
 
     private static TradeService ts(Exchange exchange) {
-        return new SilverTradeService(exchange, IDGEN);
+        return new SilverTradeService(exchange, ID_GEN);
     }
 
     @Test
@@ -112,7 +112,7 @@ class SilverTradeServiceTest {
 
     @Test
     void testOverrideId() throws IOException {
-        Exchange x = new Exchange(new DefaultTransactionFactory(CLOCK));
+        Exchange x = new Exchange(new TestTransactionFactory(CLOCK));
         TradeService service = ts(x);
 
         String actualId = service.placeLimitOrder(new LimitOrder.Builder(Order.OrderType.ASK, PAIR)

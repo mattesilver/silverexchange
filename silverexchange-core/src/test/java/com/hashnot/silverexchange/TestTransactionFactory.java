@@ -1,14 +1,15 @@
 package com.hashnot.silverexchange;
 
+import com.hashnot.silverexchange.ext.Clock;
+import com.hashnot.silverexchange.ext.ITransactionFactory;
 import com.hashnot.silverexchange.match.Transaction;
-import com.hashnot.silverexchange.util.Clock;
 
 import java.math.BigDecimal;
 
-public class DefaultTransactionFactory implements ITransactionFactory {
+public class TestTransactionFactory implements ITransactionFactory {
     final private Clock clock;
 
-    public DefaultTransactionFactory(Clock clock) {
+    public TestTransactionFactory(Clock clock) {
         this.clock = clock;
     }
 

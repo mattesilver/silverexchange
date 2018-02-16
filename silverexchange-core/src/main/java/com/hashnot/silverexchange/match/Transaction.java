@@ -1,6 +1,5 @@
 package com.hashnot.silverexchange.match;
 
-import com.hashnot.silverexchange.OfferRate;
 import com.hashnot.silverexchange.TransactionRate;
 
 import java.math.BigDecimal;
@@ -11,10 +10,6 @@ public class Transaction {
     private final BigDecimal amount;
     private final TransactionRate rate;
     private final Instant timestamp;
-
-    public Transaction(BigDecimal amount, OfferRate rate, Instant timestamp) {
-        this(amount, TransactionRate.from(rate), timestamp);
-    }
 
     public Transaction(BigDecimal amount, TransactionRate rate, Instant timestamp) {
         assert amount != null : "Null transaction amount";

@@ -1,5 +1,6 @@
 package com.hashnot.silverexchange;
 
+import com.hashnot.silverexchange.ext.ITransactionFactory;
 import com.hashnot.silverexchange.match.Transaction;
 import com.hashnot.silverexchange.test.MockitoExtension;
 import org.junit.jupiter.api.Test;
@@ -55,7 +56,7 @@ class ExchangeTest {
 
     @Test
     void testUsageOfTransactionFactory() {
-        Transaction myTx = new Transaction(ONE, new TransactionRate(ONE), TS);
+        Transaction myTx = tx(ONE, ONE);
         when(txFactory.apply(any(), any())).thenReturn(myTx);
         Exchange x = new Exchange(txFactory);
 

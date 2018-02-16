@@ -4,4 +4,5 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public interface IIdGenerator extends Supplier<UUID> {
+    IIdGenerator DEFAULT = UUID::randomUUID;
 }

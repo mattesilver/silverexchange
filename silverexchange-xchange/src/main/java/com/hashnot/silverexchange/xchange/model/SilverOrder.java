@@ -8,10 +8,10 @@ import org.knowm.xchange.currency.CurrencyPair;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public class SilverExchangeOrder extends Offer {
+public class SilverOrder extends Offer {
     final private UUID id;
 
-    SilverExchangeOrder(CurrencyPair pair, Side side, BigDecimal amount, OfferRate rate, UUID id) {
+    public SilverOrder(CurrencyPair pair, Side side, BigDecimal amount, OfferRate rate, UUID id) {
         super(pair, side, amount, rate);
         this.id = id;
     }

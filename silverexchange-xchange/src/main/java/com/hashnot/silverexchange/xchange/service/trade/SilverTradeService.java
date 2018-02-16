@@ -2,8 +2,7 @@ package com.hashnot.silverexchange.xchange.service.trade;
 
 import com.hashnot.silverexchange.Exchange;
 import com.hashnot.silverexchange.match.Offer;
-import com.hashnot.silverexchange.xchange.model.OrderConverter;
-import com.hashnot.silverexchange.xchange.model.SilverExchangeOrder;
+import com.hashnot.silverexchange.xchange.model.SilverOrder;
 import com.hashnot.silverexchange.xchange.service.IIdGenerator;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.trade.*;
@@ -20,8 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.hashnot.silverexchange.xchange.model.OrderConverter.toOpenOrders;
-import static com.hashnot.silverexchange.xchange.model.OrderConverter.toOrder;
+import static com.hashnot.silverexchange.xchange.service.trade.OrderConverter.*;
 
 public class SilverTradeService implements TradeService {
     final private static Logger log = LoggerFactory.getLogger(SilverTradeService.class);
@@ -46,7 +44,7 @@ public class SilverTradeService implements TradeService {
 
     @Override
     public String placeLimitOrder(LimitOrder limitOrder) {
-        SilverExchangeOrder order = toOrder(limitOrder, idGenerator);
+        SilverOrder order = fromLimitOrder(limitOrder, idGenerator);
         Offer remainder = exchange.post(order);
         assert remainder == null : "Remainder from posting market order";
         return order.getId().toString();
@@ -54,7 +52,7 @@ public class SilverTradeService implements TradeService {
 
     @Override
     public String placeMarketOrder(MarketOrder marketOrder) {
-        SilverExchangeOrder order = toOrder(marketOrder, idGenerator);
+        SilverOrder order = fromMarketOrder(marketOrder, idGenerator);
         Offer remainder = exchange.post(order);
         if (remainder != null)
             log.warn("Unhandled remainder from executing market order {}", remainder);
@@ -97,7 +95,7 @@ public class SilverTradeService implements TradeService {
         for (List<Offer> offers : exchange.getAllOffers().values()) {
             for (Iterator<Offer> iterator = offers.iterator(); iterator.hasNext(); ) {
                 Offer offer = iterator.next();
-                SilverExchangeOrder order = (SilverExchangeOrder) offer;
+                SilverOrder order = (SilverOrder) offer;
                 if (order.getId().equals(id)) {
                     iterator.remove();
                     return true;
@@ -145,6 +143,6 @@ public class SilverTradeService implements TradeService {
     }
 
     private static boolean match(Offer o, String[] ids) {
-        return Arrays.asList(ids).contains(((SilverExchangeOrder) o).getId().toString());
+        return Arrays.asList(ids).contains(((SilverOrder) o).getId().toString());
     }
 }

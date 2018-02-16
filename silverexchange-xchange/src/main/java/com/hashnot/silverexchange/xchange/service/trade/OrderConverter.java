@@ -1,8 +1,9 @@
-package com.hashnot.silverexchange.xchange.model;
+package com.hashnot.silverexchange.xchange.service.trade;
 
 import com.hashnot.silverexchange.OfferRate;
 import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.match.Side;
+import com.hashnot.silverexchange.xchange.model.SilverOrder;
 import com.hashnot.silverexchange.xchange.service.IIdGenerator;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
@@ -10,22 +11,26 @@ import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.OpenOrders;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class OrderConverter {
-    public static OpenOrders toOpenOrders(Map<Side, List<Offer>> book) {
-        int size = book.values().stream().mapToInt(List::size).sum();
-        List<LimitOrder> result = new ArrayList<>(size);
-
-        book.get(Side.Bid).stream().map(OrderConverter::toLimitOrder).forEachOrdered(result::add);
-        book.get(Side.Ask).stream().map(OrderConverter::toLimitOrder).forEachOrdered(result::add);
-        return new OpenOrders(result);
+    static OpenOrders toOpenOrders(Map<Side, List<Offer>> book) {
+        return new OpenOrders(
+                Stream.concat(
+                        book.get(Side.Bid).stream(),
+                        book.get(Side.Ask).stream()
+                )
+                        .map(OrderConverter::toLimitOrder)
+                        .collect(Collectors.toList())
+        );
     }
 
+
     public static LimitOrder toLimitOrder(Offer offer) {
-        SilverExchangeOrder order = (SilverExchangeOrder) offer;
+        SilverOrder order = (SilverOrder) offer;
 
         OrderType orderType = fromSide(offer.getSide());
         CurrencyPair pair = (CurrencyPair) offer.getPair();
@@ -36,12 +41,10 @@ public class OrderConverter {
                         .limitPrice(order.getRate().getValue())
                         .originalAmount(order.getAmount())
                         .build();
-
     }
 
-
-    public static SilverExchangeOrder toOrder(LimitOrder limitOrder, IIdGenerator idGenerator) {
-        return new SilverExchangeOrder(
+    static SilverOrder fromLimitOrder(LimitOrder limitOrder, IIdGenerator idGenerator) {
+        return new SilverOrder(
                 limitOrder.getCurrencyPair(),
                 toSide(limitOrder.getType()),
                 limitOrder.getOriginalAmount(),
@@ -50,8 +53,8 @@ public class OrderConverter {
         );
     }
 
-    public static SilverExchangeOrder toOrder(MarketOrder marketOrder, IIdGenerator idGenerator) {
-        return new SilverExchangeOrder(
+    static SilverOrder fromMarketOrder(MarketOrder marketOrder, IIdGenerator idGenerator) {
+        return new SilverOrder(
                 marketOrder.getCurrencyPair(),
                 toSide(marketOrder.getType()),
                 marketOrder.getOriginalAmount(),
@@ -76,4 +79,10 @@ public class OrderConverter {
     }
 
 
+    public static List<LimitOrder> toOrders(List<Offer> offers) {
+        return offers.stream()
+                .map(OrderConverter::toLimitOrder)
+                .collect(Collectors.toList())
+                ;
+    }
 }
