@@ -39,6 +39,10 @@ public class TestModelFactory {
         return new SilverOrder(ID, PAIR, Side.Bid, amount, new OfferRate(rate), TS);
     }
 
+    public static SilverOrder ask(BigDecimal amount, BigDecimal rate) {
+        return new SilverOrder(ID, PAIR, Side.Ask, amount, new OfferRate(rate), TS);
+    }
+
     public static SilverTransaction tx(BigDecimal amount, BigDecimal rate) {
         return new SilverTransaction(ID, amount, new TransactionRate(rate), TS);
     }

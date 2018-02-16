@@ -1,9 +1,8 @@
 package com.hashnot.silverexchange.xchange.service.marketdata;
 
 import com.hashnot.silverexchange.Exchange;
-import com.hashnot.silverexchange.TestModelFactory;
-import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.test.MockitoExtension;
+import com.hashnot.silverexchange.xchange.model.SilverOrder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.knowm.xchange.dto.marketdata.OrderBook;
@@ -60,8 +59,8 @@ class SilverMarketDataServiceTest {
 
     @Test
     void testGetOrderBook() throws IOException {
-        Offer o = bid(ONE, ONE);
-        when(exchange.getAllOffers()).thenReturn(TestModelFactory.sides(singletonList(o), emptyList()));
+        SilverOrder o = bid(ONE, ONE);
+        when(exchange.getAllOffers()).thenReturn(sides(singletonList(o), emptyList()));
 
         MarketDataService service = service(exchange);
 
