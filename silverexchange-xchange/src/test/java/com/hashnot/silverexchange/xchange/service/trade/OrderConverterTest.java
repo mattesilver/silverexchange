@@ -15,8 +15,6 @@ import org.mockito.Mock;
 import java.time.Instant;
 import java.util.UUID;
 
-import static com.hashnot.silverexchange.util.BigDecimalsTest.ONE;
-import static com.hashnot.silverexchange.util.BigDecimalsTest.TWO;
 import static com.hashnot.silverexchange.xchange.model.TestModelFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;

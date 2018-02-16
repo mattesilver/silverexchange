@@ -13,6 +13,10 @@ import java.time.Instant;
 import java.util.*;
 
 public class TestModelFactory {
+    public static final BigDecimal ONE = BigDecimal.ONE;
+    public static final BigDecimal TWO = new BigDecimal(2);
+    public static final BigDecimal THREE = new BigDecimal(3);
+
     public static final Instant TS = Instant.ofEpochMilli(0);
     public static final Date TS_DATE = Date.from(TS);
     public static final Clock CLOCK = () -> TS;

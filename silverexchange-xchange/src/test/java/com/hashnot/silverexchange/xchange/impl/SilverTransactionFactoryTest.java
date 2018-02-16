@@ -5,8 +5,6 @@ import com.hashnot.silverexchange.match.Transaction;
 import com.hashnot.silverexchange.xchange.model.SilverTransaction;
 import org.junit.jupiter.api.Test;
 
-import static com.hashnot.silverexchange.util.BigDecimalsTest.ONE;
-import static com.hashnot.silverexchange.util.BigDecimalsTest.TWO;
 import static com.hashnot.silverexchange.xchange.model.TestModelFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

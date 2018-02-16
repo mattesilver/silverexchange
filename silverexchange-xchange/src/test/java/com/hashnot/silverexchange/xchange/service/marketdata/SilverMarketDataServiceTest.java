@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
 
-import static com.hashnot.silverexchange.util.BigDecimalsTest.ONE;
 import static com.hashnot.silverexchange.xchange.model.TestModelFactory.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;

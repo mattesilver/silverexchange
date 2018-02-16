@@ -14,9 +14,7 @@ import java.util.List;
 
 import static com.hashnot.silverexchange.TestModelFactory.ask;
 import static com.hashnot.silverexchange.TestModelFactory.sides;
-import static com.hashnot.silverexchange.util.BigDecimalsTest.*;
-import static com.hashnot.silverexchange.xchange.model.TestModelFactory.bid;
-import static com.hashnot.silverexchange.xchange.model.TestModelFactory.tx;
+import static com.hashnot.silverexchange.xchange.model.TestModelFactory.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.*;
