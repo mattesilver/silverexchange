@@ -1,8 +1,12 @@
 package com.hashnot.silverexchange.xchange;
 
+import com.hashnot.silverexchange.Exchange;
+import com.hashnot.silverexchange.xchange.impl.SilverTransactionFactory;
+import com.hashnot.silverexchange.xchange.service.IIdGenerator;
 import com.hashnot.silverexchange.xchange.service.account.SilverAccountService;
 import com.hashnot.silverexchange.xchange.service.marketdata.SilverMarketDataService;
 import com.hashnot.silverexchange.xchange.service.trade.SilverTradeService;
+import com.hashnot.silverexchange.xchange.util.Clock;
 import org.knowm.xchange.BaseExchange;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.exceptions.ExchangeException;
@@ -12,12 +16,24 @@ import java.io.InputStream;
 public class SilverExchange extends BaseExchange {
 
     static final String NAME = "SilverExchange";
+    private IIdGenerator idGenerator;
+
+    public SilverExchange() {
+        idGenerator = IIdGenerator.DEFAULT;
+    }
+
+    public SilverExchange(IIdGenerator idGenerator) {
+        this.idGenerator = idGenerator;
+    }
 
     @Override
     protected void initServices() {
+        Clock clock = Clock.systemDefaultZone();
+        Exchange exchange = new Exchange(new SilverTransactionFactory(idGenerator, clock));
+
         this.accountService = new SilverAccountService();
-        this.marketDataService = new SilverMarketDataService();
-        this.tradeService = new SilverTradeService();
+        this.marketDataService = new SilverMarketDataService(exchange, clock);
+        this.tradeService = new SilverTradeService(exchange, idGenerator, clock);
     }
 
     @Override

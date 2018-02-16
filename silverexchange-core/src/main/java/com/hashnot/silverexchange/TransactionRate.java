@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 public class TransactionRate extends AbstractRate {
-    TransactionRate(BigDecimal value) {
+    public TransactionRate(BigDecimal value) {
         super(value);
         if (value == null)
             throw new IllegalArgumentException("Null tx rate value");

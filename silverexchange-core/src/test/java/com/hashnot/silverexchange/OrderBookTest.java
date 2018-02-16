@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.hashnot.silverexchange.ExecutionResult.empty;
+import static com.hashnot.silverexchange.OfferRate.market;
 import static com.hashnot.silverexchange.TestModelFactory.*;
 import static com.hashnot.silverexchange.util.BigDecimalsTest.*;
 import static java.util.Arrays.asList;

@@ -1,5 +1,6 @@
 package com.hashnot.silverexchange;
 
+import com.hashnot.silverexchange.ext.ITransactionFactory;
 import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.match.OfferExecutionResult;
 import com.hashnot.silverexchange.match.Side;

@@ -14,6 +14,10 @@ public class OfferRate extends AbstractRate implements Comparable<OfferRate> {
 
     }
 
+    public static OfferRate market() {
+        return new OfferRate(null);
+    }
+
     public boolean isMarket() {
         return value == null;
     }
