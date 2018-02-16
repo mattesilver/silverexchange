@@ -1,12 +1,12 @@
 package com.hashnot.silverexchange.xchange;
 
 import com.hashnot.silverexchange.Exchange;
-import com.hashnot.silverexchange.ext.Clock;
 import com.hashnot.silverexchange.xchange.impl.SilverTransactionFactory;
 import com.hashnot.silverexchange.xchange.service.IIdGenerator;
 import com.hashnot.silverexchange.xchange.service.account.SilverAccountService;
 import com.hashnot.silverexchange.xchange.service.marketdata.SilverMarketDataService;
 import com.hashnot.silverexchange.xchange.service.trade.SilverTradeService;
+import com.hashnot.silverexchange.xchange.util.Clock;
 import org.knowm.xchange.BaseExchange;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.exceptions.ExchangeException;
@@ -33,7 +33,7 @@ public class SilverExchange extends BaseExchange {
 
         this.accountService = new SilverAccountService();
         this.marketDataService = new SilverMarketDataService(exchange, clock);
-        this.tradeService = new SilverTradeService(exchange, idGenerator);
+        this.tradeService = new SilverTradeService(exchange, idGenerator, clock);
     }
 
     @Override

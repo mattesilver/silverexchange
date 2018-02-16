@@ -1,9 +1,9 @@
 package com.hashnot.silverexchange.xchange.service.marketdata;
 
-import com.hashnot.silverexchange.ext.Clock;
 import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.match.Side;
 import com.hashnot.silverexchange.match.Transaction;
+import com.hashnot.silverexchange.xchange.util.Clock;
 import org.knowm.xchange.dto.marketdata.Ticker;
 
 import java.math.BigDecimal;

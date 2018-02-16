@@ -5,12 +5,14 @@ import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.match.Side;
 import com.hashnot.silverexchange.xchange.model.SilverOrder;
 import com.hashnot.silverexchange.xchange.service.IIdGenerator;
+import com.hashnot.silverexchange.xchange.util.Clock;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.trade.LimitOrder;
 import org.knowm.xchange.dto.trade.MarketOrder;
 import org.knowm.xchange.dto.trade.OpenOrders;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,26 +42,27 @@ public class OrderConverter {
                         .id(order.getId().toString())
                         .limitPrice(order.getRate().getValue())
                         .originalAmount(order.getAmount())
+                        .timestamp(Date.from(order.getTimestamp()))
                         .build();
     }
 
-    static SilverOrder fromLimitOrder(LimitOrder limitOrder, IIdGenerator idGenerator) {
+    static SilverOrder fromLimitOrder(LimitOrder limitOrder, IIdGenerator idGenerator, Clock clock) {
         return new SilverOrder(
-                limitOrder.getCurrencyPair(),
+                idGenerator.get(), limitOrder.getCurrencyPair(),
                 toSide(limitOrder.getType()),
                 limitOrder.getOriginalAmount(),
                 new OfferRate(limitOrder.getLimitPrice()),
-                idGenerator.get()
+                clock.get()
         );
     }
 
-    static SilverOrder fromMarketOrder(MarketOrder marketOrder, IIdGenerator idGenerator) {
+    static SilverOrder fromMarketOrder(MarketOrder marketOrder, IIdGenerator idGenerator, Clock clock) {
         return new SilverOrder(
-                marketOrder.getCurrencyPair(),
+                idGenerator.get(), marketOrder.getCurrencyPair(),
                 toSide(marketOrder.getType()),
                 marketOrder.getOriginalAmount(),
                 OfferRate.market(),
-                idGenerator.get()
+                clock.get()
         );
     }
 

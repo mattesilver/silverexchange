@@ -1,9 +1,8 @@
 package com.hashnot.silverexchange.xchange.service.marketdata;
 
-import com.hashnot.silverexchange.TransactionRate;
-import com.hashnot.silverexchange.ext.Clock;
 import com.hashnot.silverexchange.match.Transaction;
 import com.hashnot.silverexchange.test.MockitoExtension;
+import com.hashnot.silverexchange.xchange.util.Clock;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.knowm.xchange.dto.marketdata.Ticker;
@@ -17,6 +16,7 @@ import static com.hashnot.silverexchange.TestModelFactory.ask;
 import static com.hashnot.silverexchange.TestModelFactory.sides;
 import static com.hashnot.silverexchange.util.BigDecimalsTest.*;
 import static com.hashnot.silverexchange.xchange.model.TestModelFactory.bid;
+import static com.hashnot.silverexchange.xchange.model.TestModelFactory.tx;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,7 +51,7 @@ class TickerConverterTest {
         Instant ts = Instant.ofEpochMilli(Integer.MAX_VALUE);
         when(clock.get()).thenReturn(ts);
 
-        List<Transaction> transactions = singletonList(new Transaction(ONE, new TransactionRate(THREE), clock.get()));
+        List<Transaction> transactions = singletonList(tx(ONE, THREE));
 
         Ticker t = TickerConverter.toTicker(sides(singletonList(bid(ONE, ONE)), singletonList(ask(ONE, TWO))), transactions, clock);
 

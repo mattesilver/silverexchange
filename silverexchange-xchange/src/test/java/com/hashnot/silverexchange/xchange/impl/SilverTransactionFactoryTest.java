@@ -17,14 +17,14 @@ class SilverTransactionFactoryTest {
         SilverTransactionFactory factory = new SilverTransactionFactory(ID_GEN, CLOCK);
 
         TransactionRate rate = new TransactionRate(TWO);
-        Transaction transaction = factory.apply(ONE, rate);
+        Transaction tx = factory.apply(ONE, rate);
 
-        assertTrue(transaction instanceof SilverTransaction);
-        assertEquals(ONE, transaction.getAmount());
-        assertEquals(rate, transaction.getRate());
-        assertEquals(TS, transaction.getTimestamp());
+        assertTrue(tx instanceof SilverTransaction);
+        SilverTransaction stx = (SilverTransaction) tx;
 
-        SilverTransaction tx = (SilverTransaction) transaction;
-        assertEquals(ID, tx.getId());
+        assertEquals(ONE, tx.getAmount());
+        assertEquals(ID, stx.getId());
+        assertEquals(rate, tx.getRate());
+        assertEquals(TS, stx.getTimestamp());
     }
 }

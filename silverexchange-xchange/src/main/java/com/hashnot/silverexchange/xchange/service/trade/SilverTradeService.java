@@ -4,6 +4,7 @@ import com.hashnot.silverexchange.Exchange;
 import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.xchange.model.SilverOrder;
 import com.hashnot.silverexchange.xchange.service.IIdGenerator;
+import com.hashnot.silverexchange.xchange.util.Clock;
 import org.knowm.xchange.dto.Order;
 import org.knowm.xchange.dto.trade.*;
 import org.knowm.xchange.exceptions.ExchangeException;
@@ -26,10 +27,12 @@ public class SilverTradeService implements TradeService {
 
     final private Exchange exchange;
     final private IIdGenerator idGenerator;
+    final private Clock clock;
 
-    public SilverTradeService(Exchange exchange, IIdGenerator idGenerator) {
+    public SilverTradeService(Exchange exchange, IIdGenerator idGenerator, Clock clock) {
         this.exchange = exchange;
         this.idGenerator = idGenerator;
+        this.clock = clock;
     }
 
     @Override
@@ -44,7 +47,7 @@ public class SilverTradeService implements TradeService {
 
     @Override
     public String placeLimitOrder(LimitOrder limitOrder) {
-        SilverOrder order = fromLimitOrder(limitOrder, idGenerator);
+        SilverOrder order = fromLimitOrder(limitOrder, idGenerator, clock);
         Offer remainder = exchange.post(order);
         assert remainder == null : "Remainder from posting market order";
         return order.getId().toString();
@@ -52,7 +55,7 @@ public class SilverTradeService implements TradeService {
 
     @Override
     public String placeMarketOrder(MarketOrder marketOrder) {
-        SilverOrder order = fromMarketOrder(marketOrder, idGenerator);
+        SilverOrder order = fromMarketOrder(marketOrder, idGenerator, clock);
         Offer remainder = exchange.post(order);
         if (remainder != null)
             log.warn("Unhandled remainder from executing market order {}", remainder);

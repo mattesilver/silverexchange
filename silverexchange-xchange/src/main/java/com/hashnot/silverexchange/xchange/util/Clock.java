@@ -1,4 +1,4 @@
-package com.hashnot.silverexchange.ext;
+package com.hashnot.silverexchange.xchange.util;
 
 import java.time.Instant;
 import java.util.function.Supplier;

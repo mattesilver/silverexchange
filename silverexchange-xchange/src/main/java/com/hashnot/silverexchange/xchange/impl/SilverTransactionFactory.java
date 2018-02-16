@@ -1,11 +1,11 @@
 package com.hashnot.silverexchange.xchange.impl;
 
 import com.hashnot.silverexchange.TransactionRate;
-import com.hashnot.silverexchange.ext.Clock;
 import com.hashnot.silverexchange.ext.ITransactionFactory;
 import com.hashnot.silverexchange.match.Transaction;
 import com.hashnot.silverexchange.xchange.model.SilverTransaction;
 import com.hashnot.silverexchange.xchange.service.IIdGenerator;
+import com.hashnot.silverexchange.xchange.util.Clock;
 
 import java.math.BigDecimal;
 

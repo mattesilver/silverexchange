@@ -1,7 +1,7 @@
 package com.hashnot.silverexchange.xchange.service.marketdata;
 
 import com.hashnot.silverexchange.Exchange;
-import com.hashnot.silverexchange.ext.Clock;
+import com.hashnot.silverexchange.xchange.util.Clock;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.OrderBook;
 import org.knowm.xchange.dto.marketdata.Ticker;

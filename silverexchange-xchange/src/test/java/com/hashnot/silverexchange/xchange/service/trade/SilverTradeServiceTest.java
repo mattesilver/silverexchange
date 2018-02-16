@@ -2,8 +2,8 @@ package com.hashnot.silverexchange.xchange.service.trade;
 
 import com.google.common.collect.Lists;
 import com.hashnot.silverexchange.Exchange;
-import com.hashnot.silverexchange.TestTransactionFactory;
 import com.hashnot.silverexchange.test.MockitoExtension;
+import com.hashnot.silverexchange.xchange.impl.SilverTransactionFactory;
 import com.hashnot.silverexchange.xchange.model.TestModelFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +37,7 @@ class SilverTradeServiceTest {
     private Exchange exchange;
 
     private static TradeService ts(Exchange exchange) {
-        return new SilverTradeService(exchange, ID_GEN);
+        return new SilverTradeService(exchange, ID_GEN, CLOCK);
     }
 
     @Test
@@ -75,6 +75,7 @@ class SilverTradeServiceTest {
                 .id(ID_STR)
                 .originalAmount(ONE)
                 .limitPrice(ONE)
+                .timestamp(TS_DATE)
                 .build();
         OpenOrders expected = new OpenOrders(singletonList(expectedOrder));
         assertEquals(expected.getOpenOrders(), openOrders.getOpenOrders());
@@ -112,7 +113,7 @@ class SilverTradeServiceTest {
 
     @Test
     void testOverrideId() throws IOException {
-        Exchange x = new Exchange(new TestTransactionFactory(CLOCK));
+        Exchange x = new Exchange(new SilverTransactionFactory(ID_GEN, CLOCK));
         TradeService service = ts(x);
 
         String actualId = service.placeLimitOrder(new LimitOrder.Builder(Order.OrderType.ASK, PAIR)
@@ -127,6 +128,7 @@ class SilverTradeServiceTest {
                 .originalAmount(ONE)
                 .limitPrice(ONE)
                 .id(ID_STR)
+                .timestamp(TS_DATE)
                 .build();
         assertEquals(singletonList(expectedOrder), service.getOpenOrders().getOpenOrders());
     }

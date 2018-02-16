@@ -2,10 +2,10 @@ package com.hashnot.silverexchange.xchange.model;
 
 import com.hashnot.silverexchange.OfferRate;
 import com.hashnot.silverexchange.TransactionRate;
-import com.hashnot.silverexchange.ext.Clock;
 import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.match.Side;
 import com.hashnot.silverexchange.xchange.service.IIdGenerator;
+import com.hashnot.silverexchange.xchange.util.Clock;
 import org.knowm.xchange.currency.CurrencyPair;
 
 import java.math.BigDecimal;
@@ -32,10 +32,10 @@ public class TestModelFactory {
     }
 
     public static SilverOrder bid(BigDecimal amount, BigDecimal rate) {
-        return new SilverOrder(PAIR, Side.Bid, amount, new OfferRate(rate), ID);
+        return new SilverOrder(ID, PAIR, Side.Bid, amount, new OfferRate(rate), TS);
     }
 
     public static SilverTransaction tx(BigDecimal amount, BigDecimal rate) {
-        return new SilverTransaction(ID, amount, new TransactionRate(rate), CLOCK.get());
+        return new SilverTransaction(ID, amount, new TransactionRate(rate), TS);
     }
 }
