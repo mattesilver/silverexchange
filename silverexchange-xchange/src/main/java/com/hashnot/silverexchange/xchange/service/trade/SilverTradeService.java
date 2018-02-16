@@ -95,6 +95,8 @@ public class SilverTradeService implements TradeService {
         UUID id;
         try {
             id = UUID.fromString(((CancelOrderByIdParams) orderParams).getOrderId());
+        } catch (ClassCastException e) {
+            throw new ExchangeException(e);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
