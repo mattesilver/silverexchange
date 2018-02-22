@@ -15,8 +15,8 @@ class OrderBookConverter {
     static OrderBook toOrderBook(Map<Side, List<Offer>> offers, Clock clock) {
         return new OrderBook(
                 from(clock.get()),
-                toOrders(offers.get(Side.Ask)),
-                toOrders(offers.get(Side.Bid))
+                toOrders(offers.get(Side.ASK)),
+                toOrders(offers.get(Side.BID))
         );
     }
 }

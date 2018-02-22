@@ -13,20 +13,19 @@ import static java.util.Collections.emptyList;
 
 public class OrderBook {
     private final ITransactionFactory transactionFactory;
-    private final Map<Side, List<Offer>> orderBook = new EnumMap<>(Side.class);
-
-    {
-        // these lists will be more or less as frequently searched as inserted to, use LinkedList for now.
-        orderBook.put(Side.Ask, new LinkedList<>());
-        orderBook.put(Side.Bid, new LinkedList<>());
-    }
+    private final Map<Side, List<Offer>> allOffers;
 
     OrderBook(ITransactionFactory transactionFactory) {
         this.transactionFactory = transactionFactory;
+
+        allOffers = new EnumMap<>(Side.class);
+        // these lists will be more or less as frequently searched as inserted to, use LinkedList for now.
+        allOffers.put(Side.ASK, new LinkedList<>());
+        allOffers.put(Side.BID, new LinkedList<>());
     }
 
     public ExecutionResult post(Offer o) {
-        List<Offer> otherSideOffers = orderBook.get(o.getSide().reverse());
+        List<Offer> otherSideOffers = allOffers.get(o.getSide().reverse());
         if (otherSideOffers.isEmpty()) {
             if (o.isMarketOrder()) {
                 return new ExecutionResult(emptyList(), o);
@@ -73,7 +72,7 @@ public class OrderBook {
     }
 
     private void insert(Offer o) {
-        List<Offer> offers = orderBook.get(o.getSide());
+        List<Offer> offers = this.allOffers.get(o.getSide());
         int index = Collections.binarySearch(offers, o, Offer::compareByRate);
         if (index < 0)
             offers.add(-index - 1, o);
@@ -89,14 +88,14 @@ public class OrderBook {
      * @return All offers, bids ordered by price in descending order, then asks ordered ascending
      */
     public Map<Side, List<Offer>> getAllOffers() {
-        return orderBook;
+        return allOffers;
     }
 
     /**
      * @return true if this order book contains no passive offers
      */
     public boolean isEmpty() {
-        return isEmpty(orderBook);
+        return isEmpty(allOffers);
     }
 
     static boolean isEmpty(Map<Side, List<Offer>> orderBook) {

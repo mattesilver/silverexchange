@@ -47,6 +47,11 @@ public class OfferRate extends AbstractRate implements Comparable<OfferRate> {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
+
+    @Override
     public String toString() {
         return value == null ? "market" : super.toString();
     }

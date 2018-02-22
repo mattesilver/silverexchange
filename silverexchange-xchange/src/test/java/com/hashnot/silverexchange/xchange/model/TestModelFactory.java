@@ -29,18 +29,18 @@ public class TestModelFactory {
 
     public static Map<Side, List<Offer>> sides(List<SilverOrder> bids, List<SilverOrder> asks) {
         Map<Side, List<SilverOrder>> result = new EnumMap<>(Side.class);
-        result.put(Side.Bid, bids);
-        result.put(Side.Ask, asks);
+        result.put(Side.BID, bids);
+        result.put(Side.ASK, asks);
 
         return (Map<Side, List<Offer>>) (Map) result;
     }
 
     public static SilverOrder bid(BigDecimal amount, BigDecimal rate) {
-        return new SilverOrder(ID, PAIR, Side.Bid, amount, new OfferRate(rate), TS);
+        return new SilverOrder(ID, PAIR, Side.BID, amount, new OfferRate(rate), TS);
     }
 
     public static SilverOrder ask(BigDecimal amount, BigDecimal rate) {
-        return new SilverOrder(ID, PAIR, Side.Ask, amount, new OfferRate(rate), TS);
+        return new SilverOrder(ID, PAIR, Side.ASK, amount, new OfferRate(rate), TS);
     }
 
     public static SilverTransaction tx(BigDecimal amount, BigDecimal rate) {

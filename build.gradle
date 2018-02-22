@@ -7,6 +7,10 @@ buildscript {
     }
 }
 
+plugins {
+    id "org.sonarqube" version "2.6.2" apply false
+}
+
 version = '1.0'
 
 ext {
@@ -15,6 +19,7 @@ ext {
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'org.sonarqube'
 
     sourceCompatibility = 1.8
 
