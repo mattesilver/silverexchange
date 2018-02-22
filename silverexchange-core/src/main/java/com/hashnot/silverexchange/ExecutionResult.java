@@ -11,13 +11,13 @@ public class ExecutionResult {
     /**
      * List of all transactions that happened as a result of matching an offer against the order book
      */
-    final public List<Transaction> transactions;
+    public final List<Transaction> transactions;
 
     /**
      * An {@link Offer} that represents unexecuted part of the original market order. Unexecuted Offers representing market orders
      * cannot be added to order book as they lack {@link Offer#rate}
      */
-    final public Offer remainder;
+    public final Offer remainder;
 
     public ExecutionResult(List<Transaction> transactions, Offer remainder) {
         this.transactions = transactions;

@@ -49,7 +49,7 @@ class OrderConverterTest {
         //then
         assertNotNull(o);
         assertEquals(id, o.getId());
-        assertEquals(Side.Ask, o.getSide());
+        assertEquals(Side.ASK, o.getSide());
         assertEquals(ONE, o.getAmount());
         assertEquals(TWO, o.getRate().getValue());
         assertNotNull(o.toString());
@@ -76,7 +76,7 @@ class OrderConverterTest {
         //then
         assertNotNull(o);
         assertEquals(id, o.getId());
-        assertEquals(Side.Ask, o.getSide());
+        assertEquals(Side.ASK, o.getSide());
         assertEquals(ONE, o.getAmount());
         assertTrue(o.getRate().isMarket());
         assertNotNull(o.toString());

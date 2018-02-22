@@ -18,7 +18,7 @@ public abstract class AbstractRate {
     }
 
     @Override
-    abstract public boolean equals(Object obj);
+    public abstract boolean equals(Object obj);
 
     @Override
     public int hashCode() {

@@ -61,8 +61,8 @@ public class Offer {
         int amountDiffSig = amountDiff.signum();
 
         // here we have to null either of remainders in the result
-        Offer remainder,
-                passiveRemainder;
+        Offer remainder;
+        Offer passiveRemainder;
         Transaction tx;
 
         if (amountDiffSig == 0) {

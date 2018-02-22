@@ -4,20 +4,20 @@ public enum Side {
     /**
      * Buy price or order
      */
-    Bid(-1),
+    BID(-1),
 
     /**
      * Sell price or order
      */
-    Ask(1);
+    ASK(1);
 
-    final public int orderSignum;
+    public final int orderSignum;
 
     Side(int orderSignum) {
         this.orderSignum = orderSignum;
     }
 
     public Side reverse() {
-        return this == Ask ? Bid : Ask;
+        return this == ASK ? BID : ASK;
     }
 }

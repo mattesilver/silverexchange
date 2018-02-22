@@ -18,8 +18,8 @@ public class TickerConverter {
     static Ticker toTicker(Map<Side, List<Offer>> offers, List<Transaction> transactions, Clock clock) {
         Ticker.Builder builder = new Ticker.Builder();
 
-        consumeFirst(offers, Side.Ask, builder::ask);
-        consumeFirst(offers, Side.Bid, builder::bid);
+        consumeFirst(offers, Side.ASK, builder::ask);
+        consumeFirst(offers, Side.BID, builder::bid);
         consumeFirst(transactions, combine(t -> t.getRate().getValue(), builder::last));
         builder.timestamp(Date.from(clock.get()));
 

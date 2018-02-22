@@ -22,8 +22,8 @@ public class OrderConverter {
     static OpenOrders toOpenOrders(Map<Side, List<Offer>> book) {
         return new OpenOrders(
                 Stream.concat(
-                        book.get(Side.Bid).stream(),
-                        book.get(Side.Ask).stream()
+                        book.get(Side.BID).stream(),
+                        book.get(Side.ASK).stream()
                 )
                         .map(OrderConverter::toLimitOrder)
                         .collect(Collectors.toList())
@@ -73,9 +73,9 @@ public class OrderConverter {
     private static Side toSide(OrderType type) {
         switch (type) {
             case ASK:
-                return Side.Ask;
+                return Side.ASK;
             case BID:
-                return Side.Bid;
+                return Side.BID;
             default:
                 throw new IllegalArgumentException(type.name());
         }
