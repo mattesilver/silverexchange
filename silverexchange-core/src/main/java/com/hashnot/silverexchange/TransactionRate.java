@@ -25,6 +25,11 @@ public class TransactionRate extends AbstractRate {
         return obj == this || obj instanceof TransactionRate && equals((TransactionRate) obj);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
+
     private boolean equals(TransactionRate r) {
         return Objects.equals(value, r.value);
     }
