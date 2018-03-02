@@ -1,6 +1,8 @@
 package com.hashnot.silverexchange.xchange.service.marketdata;
 
 import com.hashnot.silverexchange.Exchange;
+import com.hashnot.silverexchange.xchange.model.SilverOrder;
+import com.hashnot.silverexchange.xchange.model.SilverTransaction;
 import com.hashnot.silverexchange.xchange.util.Clock;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.OrderBook;
@@ -13,10 +15,10 @@ import static com.hashnot.silverexchange.xchange.service.marketdata.TickerConver
 import static com.hashnot.silverexchange.xchange.service.marketdata.TransactionConverter.toTrades;
 
 public class SilverMarketDataService implements MarketDataService {
-    final private Exchange exchange;
+    final private Exchange<SilverTransaction, SilverOrder> exchange;
     final private Clock clock;
 
-    public SilverMarketDataService(Exchange exchange, Clock clock) {
+    public SilverMarketDataService(Exchange<SilverTransaction, SilverOrder> exchange, Clock clock) {
         this.exchange = exchange;
         this.clock = clock;
     }

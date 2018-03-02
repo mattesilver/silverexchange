@@ -1,5 +1,6 @@
 package com.hashnot.silverexchange.match;
 
+import com.hashnot.silverexchange.Transaction;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -16,11 +17,13 @@ class OfferTest {
     @Test
     void testExceptionOnNonPositiveRate() {
         assertThrows(IllegalArgumentException.class, () -> ask(ONE, ONE.negate()));
+        assertThrows(IllegalArgumentException.class, () -> ask(ONE, ZERO));
     }
 
     @Test
     void testExceptionOnNonPositiveAmount() {
         assertThrows(IllegalArgumentException.class, () -> ask(ONE.negate(), ONE));
+        assertThrows(IllegalArgumentException.class, () -> ask(ZERO, ONE));
     }
 
     @Test
@@ -29,15 +32,15 @@ class OfferTest {
         Offer passive = bid(ONE, rate);
         Offer active = ask(ONE, rate);
 
-
-        OfferExecutionResult result = active.execute(passive, TX_FACTORY);
+        TestTransactionListener l = new TestTransactionListener();
+        OfferExecutionResult<Offer> result = active.execute(passive, l);
 
 
         assertNull(result.passiveRemainder);
         assertNull(result.remainder);
 
         Transaction expectedTx = tx(ONE, rate);
-        assertEquals(expectedTx, result.transaction);
+        assertEquals(expectedTx, l.transaction);
     }
 
     @Test
@@ -47,7 +50,8 @@ class OfferTest {
         Offer active = ask(THREE, rate);
 
 
-        OfferExecutionResult result = active.execute(passive, TX_FACTORY);
+        TestTransactionListener l = new TestTransactionListener();
+        OfferExecutionResult<Offer> result = active.execute(passive, l);
 
         assertNull(result.passiveRemainder);
 
@@ -55,7 +59,7 @@ class OfferTest {
         assertEquals(expectedRemainder, result.remainder);
 
         Transaction expectedTx = tx(ONE, rate);
-        assertEquals(expectedTx, result.transaction);
+        assertEquals(expectedTx, l.transaction);
     }
 
     @Test
@@ -65,7 +69,8 @@ class OfferTest {
         Offer active = ask(TWO, rate);
 
 
-        OfferExecutionResult result = active.execute(passive, TX_FACTORY);
+        TestTransactionListener l = new TestTransactionListener();
+        OfferExecutionResult<Offer> result = active.execute(passive, l);
 
         assertNull(result.remainder);
 
@@ -73,7 +78,7 @@ class OfferTest {
         assertEquals(expectedAgainstRemainder, result.passiveRemainder);
 
         Transaction expectedTx = tx(TWO, rate);
-        assertEquals(expectedTx, result.transaction);
+        assertEquals(expectedTx, l.transaction);
     }
 
     @Test
@@ -82,9 +87,10 @@ class OfferTest {
         Offer active = ask(TWO, TWO);
 
 
-        OfferExecutionResult result = active.execute(passive, TX_FACTORY);
+        TestTransactionListener l = new TestTransactionListener();
+        OfferExecutionResult<Offer> result = active.execute(passive, l);
 
-        assertNull(result.transaction);
+        assertNull(l.transaction);
 
         assertEquals(passive, result.passiveRemainder);
 
@@ -161,9 +167,10 @@ class OfferTest {
         Offer passive = ask(ONE, ONE);
         Offer active = bid(ONE, market());
 
-        OfferExecutionResult result = active.execute(passive, TX_FACTORY);
+        TestTransactionListener l = new TestTransactionListener();
+        OfferExecutionResult<Offer> result = active.execute(passive, l);
 
-        OfferExecutionResult expected = new OfferExecutionResult(tx(ONE, ONE), null, null);
+        OfferExecutionResult<Offer> expected = new OfferExecutionResult<>(null, null);
         assertEquals(expected, result);
     }
 }

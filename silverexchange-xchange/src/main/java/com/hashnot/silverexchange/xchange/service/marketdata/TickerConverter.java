@@ -1,8 +1,8 @@
 package com.hashnot.silverexchange.xchange.service.marketdata;
 
-import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.match.Side;
-import com.hashnot.silverexchange.match.Transaction;
+import com.hashnot.silverexchange.xchange.model.SilverOrder;
+import com.hashnot.silverexchange.xchange.model.SilverTransaction;
 import com.hashnot.silverexchange.xchange.util.Clock;
 import org.knowm.xchange.dto.marketdata.Ticker;
 
@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class TickerConverter {
-    static Ticker toTicker(Map<Side, List<Offer>> offers, List<Transaction> transactions, Clock clock) {
+    static Ticker toTicker(Map<Side, List<SilverOrder>> offers, List<SilverTransaction> transactions, Clock clock) {
         Ticker.Builder builder = new Ticker.Builder();
 
         consumeFirst(offers, Side.ASK, builder::ask);
@@ -26,7 +26,7 @@ public class TickerConverter {
         return builder.build();
     }
 
-    private static void consumeFirst(Map<Side, List<Offer>> offers, Side side, Consumer<BigDecimal> consumer) {
+    private static void consumeFirst(Map<Side, List<SilverOrder>> offers, Side side, Consumer<BigDecimal> consumer) {
         consumeFirst(offers.get(side), combine(o -> o.getRate().getValue(), consumer));
     }
 

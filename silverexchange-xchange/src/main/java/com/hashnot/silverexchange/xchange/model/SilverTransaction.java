@@ -1,7 +1,7 @@
 package com.hashnot.silverexchange.xchange.model;
 
+import com.hashnot.silverexchange.Transaction;
 import com.hashnot.silverexchange.TransactionRate;
-import com.hashnot.silverexchange.match.Transaction;
 
 import java.math.BigDecimal;
 import java.time.Instant;

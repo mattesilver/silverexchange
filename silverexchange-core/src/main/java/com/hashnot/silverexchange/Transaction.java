@@ -1,6 +1,4 @@
-package com.hashnot.silverexchange.match;
-
-import com.hashnot.silverexchange.TransactionRate;
+package com.hashnot.silverexchange;
 
 import java.math.BigDecimal;
 import java.util.Objects;

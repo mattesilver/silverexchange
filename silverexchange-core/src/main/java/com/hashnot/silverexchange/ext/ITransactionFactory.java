@@ -1,10 +1,10 @@
 package com.hashnot.silverexchange.ext;
 
-import com.hashnot.silverexchange.TransactionRate;
-import com.hashnot.silverexchange.match.Transaction;
+import com.hashnot.silverexchange.Transaction;
+import com.hashnot.silverexchange.match.Offer;
 
 import java.math.BigDecimal;
-import java.util.function.BiFunction;
 
-public interface ITransactionFactory extends BiFunction<BigDecimal, TransactionRate, Transaction> {
+public interface ITransactionFactory<OfferT extends Offer, TransactionT extends Transaction> {
+    TransactionT create(BigDecimal amount, BigDecimal rate, OfferT offer);
 }
