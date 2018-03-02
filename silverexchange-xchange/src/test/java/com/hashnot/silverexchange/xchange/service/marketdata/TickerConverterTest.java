@@ -1,7 +1,7 @@
 package com.hashnot.silverexchange.xchange.service.marketdata;
 
-import com.hashnot.silverexchange.match.Transaction;
 import com.hashnot.silverexchange.test.MockitoExtension;
+import com.hashnot.silverexchange.xchange.model.SilverTransaction;
 import com.hashnot.silverexchange.xchange.util.Clock;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,7 +47,7 @@ class TickerConverterTest {
         Instant ts = Instant.ofEpochMilli(Integer.MAX_VALUE);
         when(clock.get()).thenReturn(ts);
 
-        List<Transaction> transactions = singletonList(tx(ONE, THREE));
+        List<SilverTransaction> transactions = singletonList(tx(ONE, THREE));
 
         Ticker t = TickerConverter.toTicker(sides(singletonList(bid(ONE, ONE)), singletonList(ask(ONE, TWO))), transactions, clock);
 

@@ -2,14 +2,14 @@ package com.hashnot.silverexchange.xchange.impl;
 
 import com.hashnot.silverexchange.TransactionRate;
 import com.hashnot.silverexchange.ext.ITransactionFactory;
-import com.hashnot.silverexchange.match.Transaction;
+import com.hashnot.silverexchange.xchange.model.SilverOrder;
 import com.hashnot.silverexchange.xchange.model.SilverTransaction;
 import com.hashnot.silverexchange.xchange.service.IIdGenerator;
 import com.hashnot.silverexchange.xchange.util.Clock;
 
 import java.math.BigDecimal;
 
-public class SilverTransactionFactory implements ITransactionFactory {
+public class SilverTransactionFactory implements ITransactionFactory<SilverOrder, SilverTransaction> {
     final private IIdGenerator idGenerator;
     final private Clock clock;
 
@@ -19,7 +19,7 @@ public class SilverTransactionFactory implements ITransactionFactory {
     }
 
     @Override
-    public Transaction apply(BigDecimal amount, TransactionRate rate) {
-        return new SilverTransaction(idGenerator.get(), amount, rate, clock.get());
+    public SilverTransaction create(BigDecimal amount, BigDecimal rate, SilverOrder offer) {
+        return new SilverTransaction(idGenerator.get(), amount, new TransactionRate(rate), clock.get());
     }
 }

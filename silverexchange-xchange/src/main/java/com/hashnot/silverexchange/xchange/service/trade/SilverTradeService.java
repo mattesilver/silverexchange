@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables;
 import com.hashnot.silverexchange.Exchange;
 import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.xchange.model.SilverOrder;
+import com.hashnot.silverexchange.xchange.model.SilverTransaction;
 import com.hashnot.silverexchange.xchange.service.IIdGenerator;
 import com.hashnot.silverexchange.xchange.util.Clock;
 import org.knowm.xchange.dto.Order;
@@ -26,11 +27,11 @@ import static com.hashnot.silverexchange.xchange.service.trade.OrderConverter.*;
 public class SilverTradeService implements TradeService {
     final private static Logger log = LoggerFactory.getLogger(SilverTradeService.class);
 
-    final private Exchange exchange;
+    final private Exchange<SilverTransaction, SilverOrder> exchange;
     final private IIdGenerator idGenerator;
     final private Clock clock;
 
-    public SilverTradeService(Exchange exchange, IIdGenerator idGenerator, Clock clock) {
+    public SilverTradeService(Exchange<SilverTransaction, SilverOrder> exchange, IIdGenerator idGenerator, Clock clock) {
         this.exchange = exchange;
         this.idGenerator = idGenerator;
         this.clock = clock;
@@ -106,7 +107,7 @@ public class SilverTradeService implements TradeService {
     }
 
     private boolean cancelOrder(UUID id) {
-        Iterator<Offer> i = Iterables.concat(exchange.getAllOffers().values()).iterator();
+        Iterator<SilverOrder> i = Iterables.concat(exchange.getAllOffers().values()).iterator();
         while (i.hasNext()) {
             Offer offer = i.next();
             SilverOrder order = (SilverOrder) offer;

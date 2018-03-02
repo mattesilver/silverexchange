@@ -1,9 +1,12 @@
 package com.hashnot.silverexchange;
 
+import com.hashnot.silverexchange.match.ITransactionListener;
 import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.match.Side;
-import com.hashnot.silverexchange.match.Transaction;
+import com.hashnot.silverexchange.test.MockitoExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -12,92 +15,97 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.hashnot.silverexchange.ExecutionResult.empty;
 import static com.hashnot.silverexchange.OfferRate.market;
 import static com.hashnot.silverexchange.TestModelFactory.*;
 import static com.hashnot.silverexchange.util.BigDecimalsTest.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
+@ExtendWith({MockitoExtension.class})
 class OrderBookTest {
+
+    @Mock
+    private ITransactionListener<Offer> l;
 
     @Test
     void postValidOfferToEmptyBookEmptyResult() {
-        ExecutionResult transactions = b().post(ask(ONE, TWO));
-        assertEquals(empty(), transactions);
+        Offer remainder = b(l).post(ask(ONE, TWO));
+        verify(l, never()).notifyTransaction(any(), any(), any());
+        assertNull(remainder);
     }
 
     @Test
     void postValidNonMatchingOfferToNonEmptyBookEmptyResult() {
-        OrderBook book = b();
+        OrderBook<Offer> book = b(l);
 
         book.post(ask(ONE, TWO));
-        ExecutionResult transactions = book.post(ask(ONE, TWO));
-        assertEquals(empty(), transactions);
+        Offer remainder = book.post(ask(ONE, TWO));
+        verify(l, never()).notifyTransaction(any(), any(), any());
+        assertNull(remainder);
 
-        transactions = book.post(bid(ONE, ONE));
-        assertEquals(empty(), transactions);
+        remainder = book.post(bid(ONE, ONE));
+        verify(l, never()).notifyTransaction(any(), any(), any());
+        assertNull(remainder);
     }
 
     @Test
     void testPostMatchingOfferResultTransaction() {
-        OrderBook book = b();
+        OrderBook<Offer> book = b(l);
         book.post(ask(ONE, ONE));
-        ExecutionResult result = book.post(bid(ONE, ONE));
+        Offer remainder = book.post(bid(ONE, ONE));
 
-        List<Transaction> expectedTxs = singletonList(tx(ONE, ONE));
+        verify(l).notifyTransaction(eq(ONE), eq(ONE), eq(bid(ONE, ONE)));
+        assertNull(remainder);
 
-        assertEquals(new ExecutionResult(expectedTxs, null), result);
 
-
-        book = b();
+        book = b(l);
         book.post(bid(ONE, ONE));
-        result = book.post(ask(ONE, ONE));
+        remainder = book.post(ask(ONE, ONE));
 
-        expectedTxs = singletonList(tx(ONE, ONE));
-
-        assertEquals(new ExecutionResult(expectedTxs, null), result);
+        verify(l).notifyTransaction(eq(ONE), eq(ONE), eq(bid(ONE, ONE)));
+        assertNull(remainder);
     }
 
     @Test
     void testPartialExecAgainstSingleOffer() {
-        OrderBook book = b();
+        OrderBook<Offer> book = b(l);
         book.post(ask(THREE, ONE));
 
-        ExecutionResult result = book.post(bid(TWO, ONE));
+        Offer remainder = book.post(bid(TWO, ONE));
 
-        List<Transaction> expectedTxs = singletonList(tx(TWO, ONE));
-        assertEquals(new ExecutionResult(expectedTxs, null), result);
+        verify(l).notifyTransaction(eq(TWO), eq(ONE), eq(bid(TWO, ONE)));
+        assertNull(remainder);
     }
 
     @Test
     void testPartialExecAgainstMultiOffers() {
-        OrderBook book = b();
+        OrderBook<Offer> book = b(l);
         book.post(ask(ONE, ONE));
         book.post(ask(ONE, ONE));
 
-        ExecutionResult result = book.post(bid(THREE, ONE));
+        Offer remainder = book.post(bid(THREE, ONE));
 
-        List<Transaction> expectedTxs = asList(
-                tx(ONE, ONE),
-                tx(ONE, ONE)
-        );
-        assertEquals(new ExecutionResult(expectedTxs, null), result);
+        verify(l).notifyTransaction(eq(ONE), eq(ONE), eq(bid(THREE, ONE)));
+        verify(l).notifyTransaction(eq(ONE), eq(ONE), eq(bid(THREE, ONE)));
+        assertNull(remainder);
     }
 
     @Test
     void testEmptyOfferList() {
-        OrderBook book = b();
+        OrderBook<Offer> book = b(l);
         assertTrue(book.isEmpty());
     }
 
     @Test
     void testSingleOfferList() {
         Offer offer = ask(ONE, ONE);
-        OrderBook book = b();
+        OrderBook<Offer> book = b(l);
         book.post(offer);
 
         assertEquals(sides(emptyList(), singletonList(offer)), book.getAllOffers());
@@ -107,7 +115,7 @@ class OrderBookTest {
     void testMultiOfferList() {
         Offer offer1 = ask(ONE, ONE);
         Offer offer2 = ask(ONE, ONE);
-        OrderBook book = b();
+        OrderBook<Offer> book = b(l);
         book.post(offer1);
         book.post(offer2);
 
@@ -116,7 +124,7 @@ class OrderBookTest {
 
     @Test
     void testOfferListOrder() {
-        OrderBook book = b();
+        OrderBook<Offer> book = b(l);
 
         Offer offer1 = bid(ONE, ONE);
         book.post(offer1);
@@ -136,7 +144,7 @@ class OrderBookTest {
 
     @Test
     void testNewElementIsAfterOtherWithSameRate() {
-        OrderBook book = b();
+        OrderBook<Offer> book = b(l);
 
         // generate a bunch of orders and make sure orderbook returns them in the same order (bids reversed)
 
@@ -166,68 +174,73 @@ class OrderBookTest {
     @Test
     void testMarketOrderOnEmptyOrderBook() {
         //given
-        OrderBook book = b();
+        OrderBook<Offer> book = b(l);
 
         //when
-        ExecutionResult result = book.post(bid(ONE, market()));
+        Offer remainder = book.post(bid(ONE, market()));
 
         //expect
-        assertEquals(new ExecutionResult(emptyList(), bid(ONE, market())), result);
+        verify(l, never()).notifyTransaction(any(), any(), any());
+        assertEquals(bid(ONE, market()), remainder);
     }
 
     @Test
     void testMarketOrderAgainstOrderBookWithNonMatchingOrder() {
         //given
-        OrderBook book = b();
+        OrderBook<Offer> book = b(l);
         book.post(bid(ONE, ONE));
 
         //when
-        ExecutionResult result = book.post(bid(ONE, market()));
+        Offer remainder = book.post(bid(ONE, market()));
 
         //expect
-        assertEquals(new ExecutionResult(emptyList(), bid(ONE, market())), result);
+        verify(l, never()).notifyTransaction(any(), any(), any());
+        assertEquals(bid(ONE, market()), remainder);
         assertEquals(sides(singletonList(bid(ONE, ONE)), emptyList()), book.getAllOffers());
     }
 
     @Test
     void testMarketOrderAgainstOrderBookWithMatchingOrder() {
         //given
-        OrderBook book = b();
+        OrderBook<Offer> book = b(l);
         book.post(ask(ONE, ONE));
 
         //when
-        ExecutionResult result = book.post(bid(ONE, market()));
+        Offer remainder = book.post(bid(ONE, market()));
 
         //expect
-        assertEquals(new ExecutionResult(singletonList(tx(ONE, ONE)), null), result);
+        verify(l).notifyTransaction(eq(ONE), eq(ONE), eq(bid(ONE, market())));
+        assertNull(remainder);
         assertTrue(book.isEmpty());
     }
 
     @Test
     void testPartialExecutionOfMarketOrderInOrderBook() {
         //given
-        OrderBook book = b();
+        OrderBook<Offer> book = b(l);
         book.post(ask(ONE, ONE));
 
         //when
-        ExecutionResult result = book.post(bid(TWO, market()));
+        Offer remainder = book.post(bid(TWO, market()));
 
         //expect
-        assertEquals(new ExecutionResult(singletonList(tx(ONE, ONE)), bid(ONE, market())), result);
+        verify(l).notifyTransaction(eq(ONE), eq(ONE), eq(bid(TWO, market())));
+        assertEquals(bid(ONE, market()), remainder);
         assertTrue(book.isEmpty());
     }
 
     @Test
     void testPartialExecutionOfMarketOrderInOrderBookWithRemainderInOrderBook() {
         //given
-        OrderBook book = b();
+        OrderBook<Offer> book = b(l);
         book.post(ask(TWO, ONE));
 
         //when
-        ExecutionResult result = book.post(bid(ONE, market()));
+        Offer remainder = book.post(bid(ONE, market()));
 
         //expect
-        assertEquals(new ExecutionResult(singletonList(tx(ONE, ONE)), null), result);
+        verify(l).notifyTransaction(eq(ONE), eq(ONE), eq(bid(ONE, market())));
+        assertNull(remainder);
         assertEquals(sides(emptyList(), singletonList(ask(ONE, ONE))), book.getAllOffers());
     }
 }

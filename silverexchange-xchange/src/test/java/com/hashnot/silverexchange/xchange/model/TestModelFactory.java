@@ -2,7 +2,6 @@ package com.hashnot.silverexchange.xchange.model;
 
 import com.hashnot.silverexchange.OfferRate;
 import com.hashnot.silverexchange.TransactionRate;
-import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.match.Side;
 import com.hashnot.silverexchange.xchange.service.IIdGenerator;
 import com.hashnot.silverexchange.xchange.util.Clock;
@@ -27,12 +26,12 @@ public class TestModelFactory {
 
     public static final CurrencyPair PAIR = CurrencyPair.BTC_EUR;
 
-    public static Map<Side, List<Offer>> sides(List<SilverOrder> bids, List<SilverOrder> asks) {
+    public static Map<Side, List<SilverOrder>> sides(List<SilverOrder> bids, List<SilverOrder> asks) {
         Map<Side, List<SilverOrder>> result = new EnumMap<>(Side.class);
         result.put(Side.BID, bids);
         result.put(Side.ASK, asks);
 
-        return (Map<Side, List<Offer>>) (Map) result;
+        return result;
     }
 
     public static SilverOrder bid(BigDecimal amount, BigDecimal rate) {

@@ -5,25 +5,21 @@ import java.util.Objects;
 /**
  * A result of a single atomic execution of one {@link Offer} against another.
  * All fields are nullable
+ * TODO rename to OfferMatchResult, reorder fields alphabetically
  */
-public class OfferExecutionResult {
-    /**
-     * If the execution was successful, this field contains the resulting transaction.
-     */
-    public final Transaction transaction;
+public class OfferExecutionResult<OfferT extends Offer> {
 
     /**
      * A remainder of the currently executed {@link Offer}. If the offer was fully matched it's null. If the offer wasn't matched at all, it's the same object as the original offer
      */
-    public final Offer remainder;
+    public final OfferT remainder;
 
     /**
      * A remainder of the {@link Offer} from order book. if the offer was full matched, it's null and the offer should be removed from the order book. Otherwise it should replace the first offer in the order book.
      */
-    public final Offer passiveRemainder;
+    public final OfferT passiveRemainder;
 
-    OfferExecutionResult(Transaction transaction, Offer remainder, Offer passiveRemainder) {
-        this.transaction = transaction;
+    OfferExecutionResult(OfferT remainder, OfferT passiveRemainder) {
         this.remainder = remainder;
         this.passiveRemainder = passiveRemainder;
     }
@@ -31,8 +27,7 @@ public class OfferExecutionResult {
     @Override
     public String toString() {
         return
-                "transaction=" + transaction
-                        + ", remainder=" + remainder
+                "remainder=" + remainder
                         + ", passiveRemainder=" + passiveRemainder
                 ;
     }
@@ -44,8 +39,7 @@ public class OfferExecutionResult {
 
     private boolean equals(OfferExecutionResult r) {
         return
-                Objects.equals(transaction, r.transaction)
-                        && Objects.equals(remainder, r.remainder)
+                Objects.equals(remainder, r.remainder)
                         && Objects.equals(passiveRemainder, r.passiveRemainder)
                 ;
     }
@@ -53,9 +47,8 @@ public class OfferExecutionResult {
     @Override
     public int hashCode() {
         return Objects.hash(
-                transaction,
-                remainder,
-                passiveRemainder
+                passiveRemainder,
+                remainder
         );
     }
 }

@@ -1,7 +1,6 @@
 package com.hashnot.silverexchange.xchange.service.trade;
 
 import com.hashnot.silverexchange.OfferRate;
-import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.match.Side;
 import com.hashnot.silverexchange.xchange.model.SilverOrder;
 import com.hashnot.silverexchange.xchange.service.IIdGenerator;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class OrderConverter {
-    static OpenOrders toOpenOrders(Map<Side, List<Offer>> book) {
+    static OpenOrders toOpenOrders(Map<Side, List<SilverOrder>> book) {
         return new OpenOrders(
                 Stream.concat(
                         book.get(Side.BID).stream(),
@@ -31,10 +30,8 @@ public class OrderConverter {
     }
 
 
-    public static LimitOrder toLimitOrder(Offer offer) {
-        SilverOrder order = (SilverOrder) offer;
-
-        OrderType orderType = fromSide(offer.getSide());
+    public static LimitOrder toLimitOrder(SilverOrder order) {
+        OrderType orderType = fromSide(order.getSide());
         CurrencyPair pair = order.getPair();
 
         return
@@ -82,7 +79,7 @@ public class OrderConverter {
     }
 
 
-    public static List<LimitOrder> toOrders(List<Offer> offers) {
+    public static List<LimitOrder> toOrders(List<SilverOrder> offers) {
         return offers.stream()
                 .map(OrderConverter::toLimitOrder)
                 .collect(Collectors.toList())

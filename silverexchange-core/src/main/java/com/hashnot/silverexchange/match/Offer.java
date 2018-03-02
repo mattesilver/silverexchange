@@ -1,8 +1,6 @@
 package com.hashnot.silverexchange.match;
 
 import com.hashnot.silverexchange.OfferRate;
-import com.hashnot.silverexchange.TransactionRate;
-import com.hashnot.silverexchange.ext.ITransactionFactory;
 import com.hashnot.silverexchange.util.BigDecimals;
 
 import java.math.BigDecimal;
@@ -45,44 +43,46 @@ public class Offer {
     }
 
     /**
-     * @param passive   An offer from the order book (hence the name passive, it's waiting in the order book), against
-     *                  which <code>this</code> order (active) is executed
-     * @param txFactory Transaction factory object used to create Transaction objects
+     * @param passive             An offer from the order book (hence the name passive, it's waiting in the order book), against
+     *                            which <code>this</code> (active) order is executed
+     * @param transactionListener Transaction handler that will receive the transaction
      */
-    public OfferExecutionResult execute(Offer passive, ITransactionFactory txFactory) {
-        assert side != passive.side : "Not executing against offer of opposite side";
+    public <OfferT extends Offer> OfferExecutionResult<OfferT> execute(OfferT passive, ITransactionListener<OfferT> transactionListener) {
+        assert side != passive.getSide() : "Not executing against offer of opposite side";
 
         if (!rateMatch(passive)) {
             // no execution due to no price match
-            return new OfferExecutionResult(null, this, passive);
+            return new OfferExecutionResult<OfferT>((OfferT) this, passive);
         }
 
-        BigDecimal amountDiff = amount.subtract(passive.amount);
+        BigDecimal amountDiff = amount.subtract(passive.getAmount());
         int amountDiffSig = amountDiff.signum();
 
         // here we have to null either of remainders in the result
-        Offer remainder;
-        Offer passiveRemainder;
-        Transaction tx;
+        OfferT remainder;
+        OfferT passiveRemainder;
+        BigDecimal transactionAmount;
 
         if (amountDiffSig == 0) {
             // 1-to-1 match
-            tx = txFactory.apply(amount, TransactionRate.from(passive.rate));
+            transactionAmount = amount;
             remainder = passiveRemainder = null;
         } else if (amountDiffSig > 0) {
             // if this.amount > against.amount, null passiveRemainder and tx.amount comes from against
-            remainder = new Offer(side, amountDiff, rate);
+            remainder = (OfferT) new Offer(side, amountDiff, rate);
             passiveRemainder = null;
-            tx = txFactory.apply(passive.amount, TransactionRate.from(passive.rate));
+            transactionAmount = passive.getAmount();
 
             // otherwise, i.e. this.amount < against.amount, null remainder and tx.amount comes from this
         } else {
             remainder = null;
-            passiveRemainder = new Offer(passive.side, amountDiff.negate(), passive.rate);
-            tx = txFactory.apply(amount, TransactionRate.from(passive.rate));
+            passiveRemainder = (OfferT) new Offer(passive.getSide(), amountDiff.negate(), passive.getRate());
+            transactionAmount = amount;
         }
 
-        return new OfferExecutionResult(tx, remainder, passiveRemainder);
+        transactionListener.notifyTransaction(transactionAmount, passive.getRate().getValue(), (OfferT) this);
+
+        return new OfferExecutionResult<>(remainder, passiveRemainder);
     }
 
     boolean rateMatch(Offer passive) {

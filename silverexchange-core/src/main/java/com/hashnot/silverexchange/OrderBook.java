@@ -1,22 +1,19 @@
 package com.hashnot.silverexchange;
 
-import com.hashnot.silverexchange.ext.ITransactionFactory;
+import com.hashnot.silverexchange.match.ITransactionListener;
 import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.match.OfferExecutionResult;
 import com.hashnot.silverexchange.match.Side;
-import com.hashnot.silverexchange.match.Transaction;
 import com.hashnot.silverexchange.util.Lists;
 
 import java.util.*;
 
-import static java.util.Collections.emptyList;
+public class OrderBook<OfferT extends Offer> {
+    private final ITransactionListener<OfferT> transactionListener;
+    private final Map<Side, List<OfferT>> allOffers;
 
-public class OrderBook {
-    private final ITransactionFactory transactionFactory;
-    private final Map<Side, List<Offer>> allOffers;
-
-    OrderBook(ITransactionFactory transactionFactory) {
-        this.transactionFactory = transactionFactory;
+    OrderBook(ITransactionListener<OfferT> transactionListener) {
+        this.transactionListener = transactionListener;
 
         allOffers = new EnumMap<>(Side.class);
         // these lists will be more or less as frequently searched as inserted to, use LinkedList for now.
@@ -24,33 +21,28 @@ public class OrderBook {
         allOffers.put(Side.BID, new LinkedList<>());
     }
 
-    public ExecutionResult post(Offer o) {
-        List<Offer> otherSideOffers = allOffers.get(o.getSide().reverse());
+    public OfferT post(OfferT o) {
+        List<OfferT> otherSideOffers = allOffers.get(o.getSide().reverse());
         if (otherSideOffers.isEmpty()) {
             if (o.isMarketOrder()) {
-                return new ExecutionResult(emptyList(), o);
+                return o;
             } else {
                 insert(o);
-                return ExecutionResult.empty();
+                return null;
             }
         } else {
             return execute(o, otherSideOffers);
         }
     }
 
-    private ExecutionResult execute(Offer active, List<Offer> passiveOffers) {
+    private OfferT execute(OfferT active, List<OfferT> passiveOffers) {
         assert !passiveOffers.isEmpty();
         assert passiveOffers.get(0).getSide() != active.getSide();
 
-        List<Transaction> transactions = new LinkedList<>();
-
-        Offer currentActive = active;
+        OfferT currentActive = active;
         do {
-            Offer passive = passiveOffers.get(0);
-            OfferExecutionResult execResult = currentActive.execute(passive, transactionFactory);
-
-            Optional.ofNullable(execResult.transaction)
-                    .ifPresent(transactions::add);
+            OfferT passive = passiveOffers.get(0);
+            OfferExecutionResult<OfferT> execResult = currentActive.execute(passive, transactionListener);
 
             currentActive = execResult.remainder;
 
@@ -68,18 +60,18 @@ public class OrderBook {
             currentActive = null;
         }
 
-        return new ExecutionResult(transactions, currentActive);
+        return currentActive;
     }
 
-    private void insert(Offer o) {
-        List<Offer> offers = this.allOffers.get(o.getSide());
+    private void insert(OfferT o) {
+        List<OfferT> offers = this.allOffers.get(o.getSide());
         int index = Collections.binarySearch(offers, o, Offer::compareByRate);
         if (index < 0)
             offers.add(-index - 1, o);
         else {
             // Offer with the same rate as offers already present in the order book, should always be placed after the all existing ones
             // Consider forward search starting from the result of binarySearch, but for now, avoid premature optimisation
-            index = Lists.lastIndexOf(offers, o, Offer::getRate);
+            index = Lists.lastIndexOf(offers, o, OfferT::getRate);
             offers.add(index + 1, o);
         }
     }
@@ -87,7 +79,7 @@ public class OrderBook {
     /**
      * @return All offers, bids ordered by price in descending order, then asks ordered ascending
      */
-    public Map<Side, List<Offer>> getAllOffers() {
+    public Map<Side, List<OfferT>> getAllOffers() {
         return allOffers;
     }
 
@@ -98,7 +90,7 @@ public class OrderBook {
         return isEmpty(allOffers);
     }
 
-    static boolean isEmpty(Map<Side, List<Offer>> orderBook) {
+    static <OfferT extends Offer> boolean isEmpty(Map<Side, List<OfferT>> orderBook) {
         return orderBook.values().stream().allMatch(List::isEmpty);
     }
 }

@@ -1,11 +1,12 @@
 package com.hashnot.silverexchange;
 
 import com.hashnot.silverexchange.ext.ITransactionFactory;
-import com.hashnot.silverexchange.match.Transaction;
+import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.test.MockitoExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import static com.hashnot.silverexchange.TestModelFactory.*;
 import static java.math.BigDecimal.ONE;
@@ -13,19 +14,18 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.eq;
 
 @ExtendWith({MockitoExtension.class})
 class ExchangeTest {
     @Test
     void testNoOfferEmptyTransactionList() {
-        assertEquals(emptyList(), n().getAllTransactions());
+        assertEquals(emptyList(), Exchange.create().getAllTransactions());
     }
 
     @Test
     void testOneOfferEmptyTxList() {
-        Exchange x = n();
+        Exchange<Transaction, Offer> x = Exchange.create();
         x.post(ask(ONE, ONE));
 
         assertEquals(emptyList(), x.getAllTransactions());
@@ -33,7 +33,7 @@ class ExchangeTest {
 
     @Test
     void testSameSideOffersEmptyTxList() {
-        Exchange x = n();
+        Exchange<Transaction, Offer> x = Exchange.create();
         x.post(ask(ONE, ONE));
         x.post(ask(ONE, ONE));
         assertEquals(2, x.getAllOffers().size());
@@ -43,7 +43,7 @@ class ExchangeTest {
 
     @Test
     void testOneTxAppearsInTxList() {
-        Exchange x = n();
+        Exchange<Transaction, Offer> x = Exchange.create();
         x.post(ask(ONE, ONE));
         x.post(bid(ONE, ONE));
         assertTrue(OrderBook.isEmpty(x.getAllOffers()));
@@ -52,17 +52,17 @@ class ExchangeTest {
     }
 
     @Mock
-    private ITransactionFactory txFactory;
+    private ITransactionFactory<Offer, Transaction> txFactory;
 
     @Test
     void testUsageOfTransactionFactory() {
         Transaction myTx = tx(ONE, ONE);
-        when(txFactory.apply(any(), any())).thenReturn(myTx);
-        Exchange x = new Exchange(txFactory);
+
+        Exchange<Transaction, Offer> x = new Exchange<>(txFactory);
 
         x.post(ask(ONE, ONE));
         x.post(bid(ONE, ONE));
 
-        assertEquals(singletonList(myTx), x.getAllTransactions());
+        Mockito.verify(txFactory).create(eq(ONE), eq(ONE), eq(bid(ONE, ONE)));
     }
 }
