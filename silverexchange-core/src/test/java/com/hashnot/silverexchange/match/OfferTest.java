@@ -1,5 +1,6 @@
 package com.hashnot.silverexchange.match;
 
+import com.hashnot.silverexchange.OfferRate;
 import com.hashnot.silverexchange.Transaction;
 import org.junit.jupiter.api.Test;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 import static com.hashnot.silverexchange.OfferRate.market;
 import static com.hashnot.silverexchange.TestModelFactory.*;
+import static com.hashnot.silverexchange.match.Side.ASK;
 import static com.hashnot.silverexchange.util.BigDecimalsTest.*;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
@@ -157,9 +159,13 @@ class OfferTest {
 
     @Test
     void createMarketOrder() {
-        ask(ONE, market());
-        bid(ONE, market());
-        // no exceptions
+        Offer ask = ask(ONE, market());
+        assertEquals(ONE, ask.getAmount());
+        assertEquals(market(), ask.getRate());
+
+        Offer bid = bid(ONE, market());
+        assertEquals(ONE, bid.getAmount());
+        assertEquals(market(), bid.getRate());
     }
 
     @Test
@@ -172,5 +178,12 @@ class OfferTest {
 
         OfferExecutionResult<Offer> expected = new OfferExecutionResult<>(null, null);
         assertEquals(expected, result);
+    }
+
+    @Test
+    void testConstructorAssertions() {
+        assertThrows(AssertionError.class, () -> new Offer(null, ONE, new OfferRate(ONE)));
+        assertThrows(AssertionError.class, () -> new Offer(ASK, null, new OfferRate(ONE)));
+        assertThrows(AssertionError.class, () -> new Offer(ASK, ONE, null));
     }
 }

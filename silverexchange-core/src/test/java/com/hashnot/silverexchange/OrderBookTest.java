@@ -4,6 +4,7 @@ import com.hashnot.silverexchange.match.ITransactionListener;
 import com.hashnot.silverexchange.match.Offer;
 import com.hashnot.silverexchange.match.Side;
 import com.hashnot.silverexchange.test.MockitoExtension;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -242,5 +243,22 @@ class OrderBookTest {
         verify(l).notifyTransaction(eq(ONE), eq(ONE), eq(bid(ONE, market())));
         assertNull(remainder);
         assertEquals(sides(emptyList(), singletonList(ask(ONE, ONE))), book.getAllOffers());
+    }
+
+    @Test
+    void testCtorAssert() {
+        Assumptions.assumeTrue(OrderBook.class.desiredAssertionStatus());
+
+        assertThrows(AssertionError.class, () -> new OrderBook<>(null));
+    }
+
+    @Test
+    void testExecuteAssert() {
+        Assumptions.assumeTrue(OrderBook.class.desiredAssertionStatus());
+
+        OrderBook<Offer> orderBook = new OrderBook<>(l);
+
+        assertThrows(AssertionError.class, () -> orderBook.post(null));
+        verify(l, never()).notifyTransaction(any(), any(), any());
     }
 }

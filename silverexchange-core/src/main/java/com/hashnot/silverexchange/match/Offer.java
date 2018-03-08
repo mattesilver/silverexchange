@@ -17,6 +17,7 @@ public class Offer {
     public Offer(Side side, BigDecimal amount, OfferRate rate) {
         assert side != null;
         assert amount != null;
+        assert rate != null;
 
         if (!BigDecimals.gtz(amount))
             throw new IllegalArgumentException("Non-positive amount");
@@ -52,7 +53,7 @@ public class Offer {
 
         if (!rateMatch(passive)) {
             // no execution due to no price match
-            return new OfferExecutionResult<OfferT>((OfferT) this, passive);
+            return new OfferExecutionResult<>((OfferT) this, passive);
         }
 
         BigDecimal amountDiff = amount.subtract(passive.getAmount());

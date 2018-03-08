@@ -13,6 +13,8 @@ public class OrderBook<OfferT extends Offer> {
     private final Map<Side, List<OfferT>> allOffers;
 
     OrderBook(ITransactionListener<OfferT> transactionListener) {
+        assert transactionListener != null;
+
         this.transactionListener = transactionListener;
 
         allOffers = new EnumMap<>(Side.class);
@@ -22,6 +24,8 @@ public class OrderBook<OfferT extends Offer> {
     }
 
     public OfferT post(OfferT o) {
+        assert o != null;
+
         List<OfferT> otherSideOffers = allOffers.get(o.getSide().reverse());
         if (otherSideOffers.isEmpty()) {
             if (o.isMarketOrder()) {
@@ -36,6 +40,8 @@ public class OrderBook<OfferT extends Offer> {
     }
 
     private OfferT execute(OfferT active, List<OfferT> passiveOffers) {
+        assert active != null;
+        assert passiveOffers != null;
         assert !passiveOffers.isEmpty();
         assert passiveOffers.get(0).getSide() != active.getSide();
 
@@ -64,6 +70,8 @@ public class OrderBook<OfferT extends Offer> {
     }
 
     private void insert(OfferT o) {
+        assert o != null;
+
         List<OfferT> offers = this.allOffers.get(o.getSide());
         int index = Collections.binarySearch(offers, o, Offer::compareByRate);
         if (index < 0)
