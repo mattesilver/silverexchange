@@ -36,11 +36,11 @@ class OfferTest {
         Offer active = ask(ONE, rate);
 
         TestTransactionListener l = new TestTransactionListener();
-        OfferExecutionResult<Offer> result = active.execute(passive, l);
+        OfferMatchResult<Offer> result = active.match(passive, l);
 
 
         assertNull(result.passiveRemainder);
-        assertNull(result.remainder);
+        assertNull(result.activeRemainder);
 
         Transaction expectedTx = tx(ONE, rate);
         assertEquals(expectedTx, l.transaction);
@@ -54,12 +54,12 @@ class OfferTest {
 
 
         TestTransactionListener l = new TestTransactionListener();
-        OfferExecutionResult<Offer> result = active.execute(passive, l);
+        OfferMatchResult<Offer> result = active.match(passive, l);
 
         assertNull(result.passiveRemainder);
 
         Offer expectedRemainder = ask(TWO, active.getRate());
-        assertEquals(expectedRemainder, result.remainder);
+        assertEquals(expectedRemainder, result.activeRemainder);
 
         Transaction expectedTx = tx(ONE, rate);
         assertEquals(expectedTx, l.transaction);
@@ -73,9 +73,9 @@ class OfferTest {
 
 
         TestTransactionListener l = new TestTransactionListener();
-        OfferExecutionResult<Offer> result = active.execute(passive, l);
+        OfferMatchResult<Offer> result = active.match(passive, l);
 
-        assertNull(result.remainder);
+        assertNull(result.activeRemainder);
 
         Offer expectedAgainstRemainder = bid(ONE, passive.getRate());
         assertEquals(expectedAgainstRemainder, result.passiveRemainder);
@@ -91,13 +91,13 @@ class OfferTest {
 
 
         TestTransactionListener l = new TestTransactionListener();
-        OfferExecutionResult<Offer> result = active.execute(passive, l);
+        OfferMatchResult<Offer> result = active.match(passive, l);
 
         assertNull(l.transaction);
 
         assertEquals(passive, result.passiveRemainder);
 
-        assertEquals(active, result.remainder);
+        assertEquals(active, result.activeRemainder);
     }
 
     @Test
@@ -175,9 +175,9 @@ class OfferTest {
         Offer active = bid(ONE, market());
 
         TestTransactionListener l = new TestTransactionListener();
-        OfferExecutionResult<Offer> result = active.execute(passive, l);
+        OfferMatchResult<Offer> result = active.match(passive, l);
 
-        OfferExecutionResult<Offer> expected = new OfferExecutionResult<>(null, null);
+        OfferMatchResult<Offer> expected = new OfferMatchResult<>(null, null);
         assertEquals(expected, result);
     }
 

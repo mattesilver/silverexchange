@@ -47,13 +47,14 @@ public class Offer {
      * @param passive             An offer from the order book (hence the name passive, it's waiting in the order book), against
      *                            which <code>this</code> (active) order is executed
      * @param transactionListener Transaction handler that will receive the transaction
+     * @return object containing either {@link OfferMatchResult#activeRemainder} in case active offer had bigger amount, {@link OfferMatchResult#passiveRemainder} when passive offer had bigger amount or both null when amounts where equal
      */
-    public <OfferT extends Offer> OfferExecutionResult<OfferT> execute(OfferT passive, ITransactionListener<OfferT> transactionListener) {
+    public <OfferT extends Offer> OfferMatchResult<OfferT> match(OfferT passive, ITransactionListener<OfferT> transactionListener) {
         assert side != passive.getSide() : "Not executing against offer of opposite side";
 
         if (!rateMatch(passive)) {
             // no execution due to no price match
-            return new OfferExecutionResult<>((OfferT) this, passive);
+            return new OfferMatchResult<>((OfferT) this, passive);
         }
 
         BigDecimal amountDiff = amount.subtract(passive.getAmount());
@@ -83,7 +84,7 @@ public class Offer {
 
         transactionListener.notifyTransaction(transactionAmount, passive.getRate().getValue(), (OfferT) this);
 
-        return new OfferExecutionResult<>(remainder, passiveRemainder);
+        return new OfferMatchResult<>(remainder, passiveRemainder);
     }
 
     boolean rateMatch(Offer passive) {
