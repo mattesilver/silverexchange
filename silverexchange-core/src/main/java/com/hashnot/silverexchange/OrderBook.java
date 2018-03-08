@@ -2,7 +2,7 @@ package com.hashnot.silverexchange;
 
 import com.hashnot.silverexchange.match.ITransactionListener;
 import com.hashnot.silverexchange.match.Offer;
-import com.hashnot.silverexchange.match.OfferExecutionResult;
+import com.hashnot.silverexchange.match.OfferMatchResult;
 import com.hashnot.silverexchange.match.Side;
 import com.hashnot.silverexchange.util.Lists;
 
@@ -48,9 +48,9 @@ public class OrderBook<OfferT extends Offer> {
         OfferT currentActive = active;
         do {
             OfferT passive = passiveOffers.get(0);
-            OfferExecutionResult<OfferT> execResult = currentActive.execute(passive, transactionListener);
+            OfferMatchResult<OfferT> execResult = currentActive.match(passive, transactionListener);
 
-            currentActive = execResult.remainder;
+            currentActive = execResult.activeRemainder;
 
             if (execResult.passiveRemainder != null) {
                 passiveOffers.set(0, execResult.passiveRemainder);
