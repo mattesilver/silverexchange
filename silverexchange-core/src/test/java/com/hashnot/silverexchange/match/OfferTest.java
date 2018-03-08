@@ -2,6 +2,7 @@ package com.hashnot.silverexchange.match;
 
 import com.hashnot.silverexchange.OfferRate;
 import com.hashnot.silverexchange.Transaction;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -182,6 +183,8 @@ class OfferTest {
 
     @Test
     void testConstructorAssertions() {
+        Assumptions.assumeTrue(Offer.class.desiredAssertionStatus());
+
         assertThrows(AssertionError.class, () -> new Offer(null, ONE, new OfferRate(ONE)));
         assertThrows(AssertionError.class, () -> new Offer(ASK, null, new OfferRate(ONE)));
         assertThrows(AssertionError.class, () -> new Offer(ASK, ONE, null));
